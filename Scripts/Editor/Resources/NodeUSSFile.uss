@@ -1,0 +1,11 @@
+.dialogueNode{
+    width: 150px;
+}
+
+.dialogueOptionNode{
+    width: 150px;
+}
+
+.optionNode{
+    width: 150px;
+}

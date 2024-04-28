@@ -1,0 +1,12 @@
+.hideInspectorViewButton{
+    background-color: #505050;
+}
+.showInspectorViewButton{
+    background-color: #3c3c3c;
+}
+.hideInspectorViewButton:focus{
+    border-color: rgba(0,0,0,0);
+}
+.showInspectorViewButton:focus{
+    border-color: rgba(0,0,0,0);
+}

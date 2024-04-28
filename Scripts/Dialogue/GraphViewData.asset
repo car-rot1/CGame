@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7675591854380903196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9bb7ead55100d743ba4d03ec535b7bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  author: 
+  content: 
+--- !u!114 &-7298360102492686747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4721e4b3324b0ca4baab1266601735, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28fe745ff9d64f68b80a5b60974334ca, type: 3}
+  m_Name: GraphViewData
+  m_EditorClassIdentifier: 
+  rootNodeAsset: {fileID: -7298360102492686747}
+  position: {x: -5, y: 91, z: 0}
+  scale: {x: 1, y: 1, z: 1}
+  nodesData:
+  - nodeAsset: {fileID: -7298360102492686747}
+    nodeTypeName: CGame.Editor.RootNode
+    nodePosition:
+      serializedVersion: 2
+      x: 284
+      y: 55
+      width: 73
+      height: 77
+  - nodeAsset: {fileID: -7675591854380903196}
+    nodeTypeName: CGame.Editor.DialogueNode
+    nodePosition:
+      serializedVersion: 2
+      x: 420
+      y: 75
+      width: 102
+      height: 115
+  edgesData:
+  - outputNodeAsset: {fileID: -7298360102492686747}
+    inputNodeAsset: {fileID: -7675591854380903196}

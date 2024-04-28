@@ -1,0 +1,24 @@
+.inspectorView{
+    background-color: #383838;
+    height: 100%;
+}
+.imguiContainerContainer{
+    padding: 10px;
+    padding-top: 5px;
+    padding-bottom: 0;
+    width: 100%;
+    height: 100%;
+}
+.imguiContainer{
+    width: 100%;
+    height: 100%;
+}
+.splitLine{
+    position: absolute;
+    align-self: flex-end;
+    width: 5px;
+    height: 100%;
+    border-right-color: black;
+    border-right-width: 1px;
+    cursor: resize-horizontal;
+}
