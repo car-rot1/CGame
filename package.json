@@ -1,0 +1,11 @@
+{
+  "name": "com.car-rot1.cGame",
+  "version": "1.0.0",
+  "displayName": "CGame",
+  "description": "This is a game development toolbox",
+  "unity": "2019.1",
+  "author": {
+    "name": "Carrot",
+    "email": "1315883482@qq.com",
+  }
+}
