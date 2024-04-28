@@ -12,7 +12,7 @@ namespace CGame
             var monoEditorTypeType = customEditorAttributesType.GetNestedType("MonoEditorType", BindingFlags.NonPublic);
         
             var kSCustomEditors = (IDictionary)customEditorAttributesType.GetField("kSCustomEditors", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
-            var odinTestMonoEditorTypes = (IList)kSCustomEditors[typeof(Test)];
+            var odinTestMonoEditorTypes = (IList)kSCustomEditors[typeof(Transform)];
             foreach (var odinTestMonoEditorType in odinTestMonoEditorTypes)
             {
                 Debug.Log(monoEditorTypeType.GetField("m_InspectedType").GetValue(odinTestMonoEditorType));
