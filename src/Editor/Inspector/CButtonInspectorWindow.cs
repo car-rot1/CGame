@@ -89,8 +89,24 @@ namespace CGame.Editor
                         continue;
                     
                     var serializedObject = (SerializedObject)inspectorElement.GetType()
-                        .GetField("m_BoundObject", BindingFlags.NonPublic | BindingFlags.Instance)
+                        .GetProperty("boundObject", BindingFlags.NonPublic | BindingFlags.Instance)
                         !.GetValue(inspectorElement);
+
+                    
+                    // var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                    // var iterator = serializedObject.GetIterator();
+                    // while (iterator.Next(true))
+                    // {
+                    //     foreach (var assembly in assemblies)
+                    //     {
+                    //         var type = assembly.GetType(iterator.type);
+                    //         if (type != null)
+                    //         {
+                    //             Debug.Log(type);
+                    //             break;
+                    //         }
+                    //     }
+                    // }
                     
                     var myElement = new VisualElement
                     {

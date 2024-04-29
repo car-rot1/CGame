@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using CGame;
 using CGame.Localization;
+using Sirenix.OdinInspector;
+using Sirenix.OdinInspector.Editor;
+using TMPro;
 using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
-using Direction = CGame.Direction;
 
 [Serializable]
 public class CsvData
@@ -142,6 +145,33 @@ public class User
     }
 }
 
+public enum TeEnum
+{
+    A = 1,
+    B = 2,
+    C = 4
+}
+
+[Serializable]
+public class ABCCCC
+{
+    [CButton]
+    public void A()
+    {
+        
+    }
+}
+
+[Serializable]
+public struct ABCCC
+{
+    [CButton]
+    public void A()
+    {
+        
+    }
+}
+
 public class Test : MonoBehaviour
 {
     public Dropdown dropDown;
@@ -150,7 +180,6 @@ public class Test : MonoBehaviour
     {
         if (dropDown == null)
             return;
-        
         var index = 0;
         
         dropDown.options.Clear();
@@ -172,5 +201,20 @@ public class Test : MonoBehaviour
         {
             system.Language = dropDown.options[i].text;
         });
+    }
+    
+    public ABCCCC a;
+    public ABCCC b;
+    public TMP_Text ab;
+
+    private void Start()
+    {
+        this.ab = GetComponent<TMP_Text>();
+    }
+
+    [Button]
+    public void EnumTest()
+    {
+        Debug.Log(Type.GetType("CButtonInspectorWindow"));
     }
 }

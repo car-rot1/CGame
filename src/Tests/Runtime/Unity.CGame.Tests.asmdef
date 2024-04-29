@@ -2,7 +2,8 @@
     "name": "Unity.CGame.Tests",
     "rootNamespace": "",
     "references": [
-        "GUID:ed38572eda7c0774bad3aaa9b719151c"
+        "GUID:ed38572eda7c0774bad3aaa9b719151c",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
