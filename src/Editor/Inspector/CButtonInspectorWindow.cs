@@ -91,22 +91,6 @@ namespace CGame.Editor
                     var serializedObject = (SerializedObject)inspectorElement.GetType()
                         .GetProperty("boundObject", BindingFlags.NonPublic | BindingFlags.Instance)
                         !.GetValue(inspectorElement);
-
-                    
-                    // var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-                    // var iterator = serializedObject.GetIterator();
-                    // while (iterator.Next(true))
-                    // {
-                    //     foreach (var assembly in assemblies)
-                    //     {
-                    //         var type = assembly.GetType(iterator.type);
-                    //         if (type != null)
-                    //         {
-                    //             Debug.Log(type);
-                    //             break;
-                    //         }
-                    //     }
-                    // }
                     
                     var myElement = new VisualElement
                     {
@@ -118,136 +102,144 @@ namespace CGame.Editor
                         }
                     };
                     
-                    foreach (var methodInfo in serializedObject.targetObject.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
+                    DrawMethodButton(serializedObject.targetObject.GetType(), serializedObject.targetObject, myElement);
+                    foreach (var serializedPropertyInfo in SerializedPropertyInfo.Get(serializedObject))
                     {
-                        var testButtonAttribute = methodInfo.GetCustomAttribute<CButtonAttribute>();
-                        if (testButtonAttribute != null)
-                        {
-                            Type unSupportType = null;
-
-                            var parameters = new List<object>();
-                            var methodInfoParameters = methodInfo.GetParameters();
-                            for (var j = 0; j < methodInfoParameters.Length; j++)
-                            {
-                                var index = j;
-                                var parameterInfo = methodInfoParameters[index];
-
-                                if (parameterInfo.ParameterType == typeof(int))
-                                {
-                                    parameters.Add(0);
-
-                                    var integerField = new IntegerField
-                                    {
-                                        label = parameterInfo.Name,
-                                        value = 0
-                                    };
-                                    integerField.RegisterValueChangedCallback(changeEvent =>
-                                    {
-                                        parameters[index] = changeEvent.newValue;
-                                    });
-                                    myElement.Add(integerField);
-                                }
-                                else if (parameterInfo.ParameterType == typeof(float))
-                                {
-                                    parameters.Add(0f);
-                                    var floatField = new FloatField()
-                                    {
-                                        label = parameterInfo.Name,
-                                        value = 0f
-                                    };
-                                    floatField.RegisterValueChangedCallback(changeEvent =>
-                                    {
-                                        parameters[index] = changeEvent.newValue;
-                                    });
-                                    myElement.Add(floatField);
-                                }
-                                else if (parameterInfo.ParameterType == typeof(double))
-                                {
-                                    parameters.Add(0d);
-                                    var doubleField = new DoubleField()
-                                    {
-                                        label = parameterInfo.Name,
-                                        value = 0d
-                                    };
-                                    doubleField.RegisterValueChangedCallback(changeEvent =>
-                                    {
-                                        parameters[index] = changeEvent.newValue;
-                                    });
-                                    myElement.Add(doubleField);
-                                }
-                                else if (parameterInfo.ParameterType == typeof(string))
-                                {
-                                    parameters.Add("");
-                                    var textField = new TextField()
-                                    {
-                                        label = parameterInfo.Name,
-                                        value = ""
-                                    };
-                                    textField.RegisterValueChangedCallback(changeEvent =>
-                                    {
-                                        parameters[index] = changeEvent.newValue;
-                                    });
-                                    myElement.Add(textField);
-                                }
-                                else if (parameterInfo.ParameterType.IsEnum)
-                                {
-                                    parameters.Add(Enum.GetValues(parameterInfo.ParameterType).GetValue(0));
-                                    var enumField =
-                                        new EnumField(
-                                            Enum.GetValues(parameterInfo.ParameterType).GetValue(0) as Enum)
-                                        {
-                                            label = parameterInfo.Name,
-                                        };
-                                    enumField.RegisterValueChangedCallback(changeEvent =>
-                                    {
-                                        parameters[index] = changeEvent.newValue;
-                                    });
-                                    myElement.Add(enumField);
-                                }
-                                else if (parameterInfo.ParameterType.IsSubclassOf(typeof(Object)))
-                                {
-                                    parameters.Add(null);
-                                    var objectField = new ObjectField()
-                                    {
-                                        label = parameterInfo.Name,
-                                        objectType = parameterInfo.ParameterType,
-                                        value = null
-                                    };
-                                    objectField.RegisterValueChangedCallback(changeEvent =>
-                                    {
-                                        parameters[index] = changeEvent.newValue;
-                                    });
-                                    myElement.Add(objectField);
-                                }
-                                else
-                                {
-                                    unSupportType = parameterInfo.ParameterType;
-                                    break;
-                                }
-                            }
-
-                            if (unSupportType != null)
-                            {
-                                myElement.Add(new Label($"存在暂不支持的参数类型：{unSupportType.Name}"));
-                            }
-                            else
-                            {
-                                myElement.Add(new Button(() =>
-                                {
-                                    methodInfo.Invoke(serializedObject.targetObject,
-                                        parameters.Count > 0 ? parameters.ToArray() : null);
-                                })
-                                {
-                                    text = string.IsNullOrEmpty(testButtonAttribute.name)
-                                        ? methodInfo.Name
-                                        : testButtonAttribute.name
-                                });
-                            }
-                        }
+                        DrawMethodButton(serializedPropertyInfo.type, serializedPropertyInfo.value, myElement);
                     }
                     
                     if (myElement.childCount > 0)
                         inspectorElement.Add(myElement);
+                }
+            }
+        }
+
+        private static void DrawMethodButton(Type type, object value, VisualElement element)
+        {
+            foreach (var methodInfo in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
+            {
+                var cButtonAttribute = methodInfo.GetCustomAttribute<CButtonAttribute>();
+                if (cButtonAttribute != null)
+                {
+                    Type unSupportType = null;
+
+                    var parameters = new List<object>();
+                    var methodInfoParameters = methodInfo.GetParameters();
+                    for (var j = 0; j < methodInfoParameters.Length; j++)
+                    {
+                        var index = j;
+                        var parameterInfo = methodInfoParameters[index];
+
+                        if (parameterInfo.ParameterType == typeof(int))
+                        {
+                            parameters.Add(0);
+
+                            var integerField = new IntegerField
+                            {
+                                label = parameterInfo.Name,
+                                value = 0
+                            };
+                            integerField.RegisterValueChangedCallback(changeEvent =>
+                            {
+                                parameters[index] = changeEvent.newValue;
+                            });
+                            element.Add(integerField);
+                        }
+                        else if (parameterInfo.ParameterType == typeof(float))
+                        {
+                            parameters.Add(0f);
+                            var floatField = new FloatField()
+                            {
+                                label = parameterInfo.Name,
+                                value = 0f
+                            };
+                            floatField.RegisterValueChangedCallback(changeEvent =>
+                            {
+                                parameters[index] = changeEvent.newValue;
+                            });
+                            element.Add(floatField);
+                        }
+                        else if (parameterInfo.ParameterType == typeof(double))
+                        {
+                            parameters.Add(0d);
+                            var doubleField = new DoubleField()
+                            {
+                                label = parameterInfo.Name,
+                                value = 0d
+                            };
+                            doubleField.RegisterValueChangedCallback(changeEvent =>
+                            {
+                                parameters[index] = changeEvent.newValue;
+                            });
+                            element.Add(doubleField);
+                        }
+                        else if (parameterInfo.ParameterType == typeof(string))
+                        {
+                            parameters.Add("");
+                            var textField = new TextField()
+                            {
+                                label = parameterInfo.Name,
+                                value = ""
+                            };
+                            textField.RegisterValueChangedCallback(changeEvent =>
+                            {
+                                parameters[index] = changeEvent.newValue;
+                            });
+                            element.Add(textField);
+                        }
+                        else if (parameterInfo.ParameterType.IsEnum)
+                        {
+                            parameters.Add(Enum.GetValues(parameterInfo.ParameterType).GetValue(0));
+                            var enumField =
+                                new EnumField(
+                                    Enum.GetValues(parameterInfo.ParameterType).GetValue(0) as Enum)
+                                {
+                                    label = parameterInfo.Name,
+                                };
+                            enumField.RegisterValueChangedCallback(changeEvent =>
+                            {
+                                parameters[index] = changeEvent.newValue;
+                            });
+                            element.Add(enumField);
+                        }
+                        else if (parameterInfo.ParameterType.IsSubclassOf(typeof(Object)))
+                        {
+                            parameters.Add(null);
+                            var objectField = new ObjectField()
+                            {
+                                label = parameterInfo.Name,
+                                objectType = parameterInfo.ParameterType,
+                                value = null
+                            };
+                            objectField.RegisterValueChangedCallback(changeEvent =>
+                            {
+                                parameters[index] = changeEvent.newValue;
+                            });
+                            element.Add(objectField);
+                        }
+                        else
+                        {
+                            unSupportType = parameterInfo.ParameterType;
+                            break;
+                        }
+                    }
+
+                    if (unSupportType != null)
+                    {
+                        element.Add(new Label($"存在暂不支持的参数类型：{unSupportType.Name}"));
+                    }
+                    else
+                    {
+                        element.Add(new Button(() =>
+                        {
+                            methodInfo.Invoke(value, parameters.Count > 0 ? parameters.ToArray() : null);
+                        })
+                        {
+                            text = string.IsNullOrEmpty(cButtonAttribute.name)
+                                ? methodInfo.Name
+                                : cButtonAttribute.name
+                        });
+                    }
                 }
             }
         }
