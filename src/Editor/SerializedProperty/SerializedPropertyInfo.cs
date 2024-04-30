@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using Object = UnityEngine.Object;
@@ -9,13 +9,12 @@ namespace CGame.Editor
     public class SerializedPropertyInfo
     {
         public SerializedProperty serializedProperty;
-        public Type type;
-        public object value;
+        public FieldInfo fieldInfo;
+        public object Value => fieldInfo.GetValue(owner);
         public object owner;
 
         private SerializedPropertyInfo()
         {
-            
         }
         
         private const BindingFlags AllBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
@@ -32,58 +31,78 @@ namespace CGame.Editor
             var depthSerializedPropertyInfos = new List<List<SerializedPropertyInfo>>();
             var serializedObject = new SerializedObject(targetObject);
             
-            var serializedProperties = new List<SerializedProperty>();
+            var depthSerializedProperties = new List<List<SerializedProperty>>();
             var iterator = serializedObject.GetIterator();
             while (iterator.Next(true))
-                serializedProperties.Add(iterator.Copy());
-            serializedProperties.Sort((serializedProperty0, serializedProperty1) => serializedProperty0.depth - serializedProperty1.depth);
-            
-            foreach (var serializedProperty in serializedProperties)
             {
-                if (depthSerializedPropertyInfos.Count <= serializedProperty.depth)
+                if (depthSerializedProperties.Count <= iterator.depth)
+                    depthSerializedProperties.Add(new List<SerializedProperty>());
+                depthSerializedProperties[iterator.depth].Add(iterator.Copy());
+            }
+            
+            for (var depth = 0; depth < depthSerializedProperties.Count; depth++)
+            {
+                if (depthSerializedPropertyInfos.Count <= depth)
                 {
                     depthSerializedPropertyInfos.Add(new List<SerializedPropertyInfo>());
                 }
-
-                if (serializedProperty.depth == 0)
+                
+                foreach (var serializedProperty in depthSerializedProperties[depth])
                 {
-                    var fieldInfo = targetObject.GetType().GetField(serializedProperty.name, AllBindingFlags);
-                    if (fieldInfo != null)
+                    if (depth == 0)
                     {
-                        depthSerializedPropertyInfos[serializedProperty.depth].Add(new SerializedPropertyInfo
-                        {
-                            serializedProperty = serializedProperty,
-                            type = fieldInfo.FieldType,
-                            value = fieldInfo.GetValue(targetObject),
-                            owner = targetObject
-                        });
-                    }
-                }
-                else
-                {
-                    foreach (var lastInfo in depthSerializedPropertyInfos[serializedProperty.depth - 1])
-                    {
-                        var fieldInfo = lastInfo.type.GetField(serializedProperty.name, AllBindingFlags);
+                        var fieldInfo = targetObject.GetType().GetField(serializedProperty.name, AllBindingFlags);
                         if (fieldInfo != null)
                         {
                             depthSerializedPropertyInfos[serializedProperty.depth].Add(new SerializedPropertyInfo
                             {
                                 serializedProperty = serializedProperty,
-                                type = fieldInfo.FieldType,
-                                value = fieldInfo.GetValue(lastInfo.value),
-                                owner = lastInfo.value
+                                fieldInfo = fieldInfo,
+                                owner = targetObject
                             });
-                            break;
+                        }
+                        else
+                        {
+                            depthSerializedPropertyInfos[serializedProperty.depth].Add(new SerializedPropertyInfo
+                            {
+                                serializedProperty = serializedProperty
+                            });
+                        }
+                    }
+                    else
+                    {
+                        FieldInfo fieldInfo = null;
+                        foreach (var lastInfo in depthSerializedPropertyInfos[serializedProperty.depth - 1].Where(lastInfo => lastInfo.fieldInfo != null))
+                        {
+                            fieldInfo = lastInfo.fieldInfo.FieldType.GetField(serializedProperty.name, AllBindingFlags);
+                            if (fieldInfo != null)
+                            {
+                                depthSerializedPropertyInfos[serializedProperty.depth].Add(new SerializedPropertyInfo
+                                {
+                                    serializedProperty = serializedProperty,
+                                    fieldInfo = fieldInfo,
+                                    owner = lastInfo.Value
+                                });
+                                break;
+                            }
+                        }
+
+                        if (fieldInfo == null)
+                        {
+                            depthSerializedPropertyInfos[serializedProperty.depth].Add(new SerializedPropertyInfo
+                            {
+                                serializedProperty = serializedProperty
+                            });
                         }
                     }
                 }
             }
             
-            foreach (var depthSerializedPropertyInfo in depthSerializedPropertyInfos)
+            foreach (var serializedPropertyInfos in depthSerializedPropertyInfos)
             {
-                foreach (var info in depthSerializedPropertyInfo)
+                foreach (var serializedPropertyInfo in serializedPropertyInfos)
                 {
-                    SerializedPropertyInfoDic[targetObject].Add(info);
+                    SerializedPropertyInfoDic[targetObject].Add(serializedPropertyInfo);
                 }
             }
         }
