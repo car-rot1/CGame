@@ -6,7 +6,7 @@ namespace CGame.Editor
     [CustomPropertyDrawer(typeof(RequiredInterfaceMonoAttribute))]
     public class RequiredInterfaceMonoAttributeDrawer : PropertyDrawer
     {
-        private new RequiredInterfaceMonoAttribute attribute => (RequiredInterfaceMonoAttribute)base.attribute;
+        private RequiredInterfaceMonoAttribute Attribute => (RequiredInterfaceMonoAttribute)base.attribute;
 
         private bool _isError;
         
@@ -18,7 +18,7 @@ namespace CGame.Editor
                 property.serializedObject.ApplyModifiedProperties();
 
             var obj = property.objectReferenceValue;
-            if (obj != null && attribute.interfaceType.IsInstanceOfType(obj))
+            if (obj != null && Attribute.interfaceType.IsInstanceOfType(obj))
                 _isError = false;
             else
                 _isError = true;
@@ -29,7 +29,7 @@ namespace CGame.Editor
                 errorRect.xMin += EditorGUIUtility.labelWidth;
                 errorRect.y += 20;
                 errorRect.height = 18;
-                EditorGUI.HelpBox(errorRect, $"{obj.GetType().Name}类并未实现{attribute.interfaceType.Name}接口", MessageType.Error);
+                EditorGUI.HelpBox(errorRect, $"{obj.GetType().Name}类并未实现{Attribute.interfaceType.Name}接口", MessageType.Error);
             }
         }
 
