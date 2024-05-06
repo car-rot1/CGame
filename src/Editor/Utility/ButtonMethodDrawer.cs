@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using UnityEditor;
@@ -15,9 +14,9 @@ namespace CGame.Editor
     {
         private const BindingFlags All = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
-        public static void DrawGUI(Vector2 position, object value, Type valueType, Vector2 buttonSize)
+        public static float DrawGUI(Rect rect, object value, Type valueType, IList<bool> foldouts)
         {
-            var rect = new Rect(position, buttonSize);
+            var height = 0f;
             foreach (var methodInfo in valueType.GetMethods(All))
             {
                 var cButtonAttribute = methodInfo.GetCustomAttribute<CButtonAttribute>();
@@ -28,130 +27,109 @@ namespace CGame.Editor
                     var methodInfoParameters = methodInfo.GetParameters();
                     for (var i = 0; i < methodInfoParameters.Length; i++)
                     {
-                        var parameterInfo = methodInfoParameters[i];
+                        var index = i;
+                        var parameterInfo = methodInfoParameters[index];
                         
-                        parameters.Add(parameterInfo.ParameterType.IsValueType
-                            ? Activator.CreateInstance(parameterInfo.ParameterType)
-                            : null);
+                        parameters.Add(parameterInfo.ParameterType.IsValueType ? Activator.CreateInstance(parameterInfo.ParameterType) : null);
+
+                        height += DrawIMGUIField(rect, () => parameters[index], obj => parameters[index] = obj, parameterInfo.ParameterType, parameterInfo.Name, foldouts, 0);
                         
-                        if (parameterInfo.ParameterType == typeof(int))
-                        {
-                            parameters[i] = EditorGUI.IntField(rect, parameterInfo.Name, (int)parameters[i]);
-                        }
-                        else if (parameterInfo.ParameterType == typeof(float))
-                        {
-                            parameters[i] = EditorGUI.FloatField(rect, parameterInfo.Name, (float)parameters[i]);
-                        }
-                        else if (parameterInfo.ParameterType == typeof(double))
-                        {
-                            parameters[i] = EditorGUI.DoubleField(rect, parameterInfo.Name, (double)parameters[i]);
-                        }
-                        else if (parameterInfo.ParameterType == typeof(string))
-                        {
-                            parameters[i] = EditorGUI.TextField(rect, parameterInfo.Name, (string)parameters[i]);
-                        }
-                        else if (parameterInfo.ParameterType.IsEnum)
-                        {
-                            parameters[i] = EditorGUI.EnumPopup(rect, parameterInfo.Name, (Enum)parameters[i]);
-                        }
-                        else if (parameterInfo.ParameterType.IsSubclassOf(typeof(Object)))
-                        {
-                            parameters[i] = EditorGUI.ObjectField(rect, parameterInfo.Name, (Object)parameters[i], parameterInfo.ParameterType, true);
-                        }
-                        else
-                        {
-                            EditorGUI.HelpBox(rect, $"暂不支持该类型参数 : {parameterInfo.ParameterType}", MessageType.Warning);
-                        }
-                        
-                        rect.y += buttonSize.y;
-                        rect.height += buttonSize.y;
+                        rect.y = height;
                     }
 
                     if (GUI.Button(rect, string.IsNullOrEmpty(cButtonAttribute.name) ? methodInfo.Name : cButtonAttribute.name))
                     {
                         methodInfo.Invoke(value, parameters.Count > 0 ? parameters.ToArray() : null);
                     }
+                    height += EditorGUIExtension.ControlVerticalSpacing + 18;
                 }
             }
+            return height;
         }
         
-        private static Rect DrawIMGUIField(Rect rect, Func<object> valueGetter, Action<object> valueSetter, Type valueType, string label, bool foldout)
+        private static float DrawIMGUIField(Rect rect, Func<object> valueGetter, Action<object> valueSetter, Type valueType, string label, IList<bool> foldouts, int foldoutIndex)
         {
+            var result = 0f;
             var value = valueGetter.Invoke();
             if (value is int intValue)
             {
                 valueSetter.Invoke(EditorGUI.IntField(rect, label, intValue));
-                return rect;
+                return rect.height;
             }
             if (value is float floatValue)
             {
                 valueSetter.Invoke(EditorGUI.FloatField(rect, label, floatValue));
-                return rect;
+                return rect.height;
             }
             if (value is double doubleValue)
             {
                 valueSetter.Invoke(EditorGUI.DoubleField(rect, label, doubleValue));
-                return rect;
+                return rect.height;
             }
             if (valueType == typeof(string))
             {
                 valueSetter.Invoke(EditorGUI.TextField(rect, label, (string)value));
-                return rect;
+                return rect.height;
             }
             if (valueType.IsEnum)
             {
                 valueSetter.Invoke(EditorGUI.EnumPopup(rect, label, (Enum)value));
-                return rect;
+                return rect.height;
             }
             if (value is Vector2 vector2Value)
             {
                 valueSetter.Invoke(EditorGUI.Vector2Field(rect, label, vector2Value));
-                return rect;
+                return rect.height;
             }
             if (value is Vector2Int vector2IntValue)
             {
                 valueSetter.Invoke(EditorGUI.Vector2IntField(rect, label, vector2IntValue));
-                return rect;
+                return rect.height;
             }
             if (value is Vector3 vector3Value)
             {
                 valueSetter.Invoke(EditorGUI.Vector3Field(rect, label, vector3Value));
-                return rect;
+                return rect.height;
             }
             if (value is Vector3Int vector3IntValue)
             {
                 valueSetter.Invoke(EditorGUI.Vector3IntField(rect, label, vector3IntValue));
-                return rect;
+                return rect.height;
             }
             if (value is Vector4 vector4Value)
             {
                 valueSetter.Invoke(EditorGUI.Vector4Field(rect, label, vector4Value));
-                return rect;
+                return rect.height;
             }
             if (value is Rect rectValue)
             {
                 valueSetter.Invoke(EditorGUI.RectField(rect, label, rectValue));
-                return rect;
+                return rect.height;
             }
             if (value is RectInt rectIntValue)
             {
                 valueSetter.Invoke(EditorGUI.RectIntField(rect, label, rectIntValue));
-                return rect;
+                return rect.height;
             }
             if (valueType.IsSubclassOf(typeof(Object)))
             {
                 valueSetter.Invoke(EditorGUI.ObjectField(rect, label, (Object)value, valueType, true));
-                return rect;
+                return rect.height;
             }
 
-            foldout = EditorGUI.Foldout(rect, foldout, label);
-            if (foldout)
+            if (foldoutIndex >= foldouts.Count)
+                foldouts.Add(false);
+            foldouts[foldoutIndex] = EditorGUI.Foldout(rect, foldouts[foldoutIndex], label);
+            result += rect.height;
+            if (foldouts[foldoutIndex])
             {
+                foldoutIndex++;
+                rect.xMin += 15;
+                EditorGUIUtility.labelWidth -= 15;
                 var height = rect.height;
                 foreach (var fieldInfo in valueType.GetFields(All))
                 {
-                    rect.y += height + 2;
-                    rect.height = height;
+                    rect.y += height + EditorGUIExtension.ControlVerticalSpacing;
                     
                     if (value == null)
                     {
@@ -160,11 +138,12 @@ namespace CGame.Editor
                     }
 
                     var newValue = value;
-                    DrawIMGUIField(rect, () => fieldInfo.GetValue(newValue), obj => fieldInfo.SetValue(newValue, obj), fieldInfo.FieldType, fieldInfo.Name, false);
+                    result += EditorGUIExtension.ControlVerticalSpacing;
+                    result += DrawIMGUIField(rect, () => fieldInfo.GetValue(newValue), obj => fieldInfo.SetValue(newValue, obj), fieldInfo.FieldType, fieldInfo.Name, foldouts, foldoutIndex);
                 }
             }
 
-            return rect;
+            return result;
         }
         
         public static VisualElement DrawElement(object value, Type valueType, Vector2 buttonSize = default)

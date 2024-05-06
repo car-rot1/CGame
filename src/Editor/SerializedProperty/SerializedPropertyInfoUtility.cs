@@ -11,10 +11,37 @@ namespace CGame.Editor
         private const BindingFlags AllBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
         
         private static readonly Dictionary<Object, List<SerializedPropertyInfo>> SerializedPropertyInfoDic = new();
-        private static readonly Dictionary<Object, List<SerializedPropertyInfo>> VisibleSerializedPropertyInfoDic = new();
-
-        private static List<List<SerializedPropertyInfo>> ToDepthSerializedPropertyInfos(List<List<SerializedProperty>> depthSerializedProperties, Object targetObject)
+        
+        private static void Add(Object targetObject)
         {
+            if (SerializedPropertyInfoDic.ContainsKey(targetObject))
+                return;
+            SerializedPropertyInfoDic.Add(targetObject, new List<SerializedPropertyInfo>());
+            
+            var serializedObject = new SerializedObject(targetObject);
+            
+            var depthSerializedProperties = new List<List<(SerializedProperty serializedProperty, bool visible)>>();
+            var iterator = serializedObject.GetIterator();
+            while (iterator.Next(true))
+            {
+                if (depthSerializedProperties.Count <= iterator.depth)
+                    depthSerializedProperties.Add(new List<(SerializedProperty serializedProperty, bool visible)>());
+                depthSerializedProperties[iterator.depth].Add((iterator.Copy(), false));
+            }
+
+            iterator.Reset();
+            while (iterator.NextVisible(true))
+            {
+                var serializedProperties = depthSerializedProperties[iterator.depth];
+                for (var i = 0; i < serializedProperties.Count; i++)
+                {
+                    if (!serializedProperties[i].serializedProperty.propertyPath.Equals(iterator.propertyPath))
+                        continue;
+                    serializedProperties[i] = (serializedProperties[i].serializedProperty, true);
+                    break;
+                }
+            }
+            
             var depthSerializedPropertyInfos = new List<List<SerializedPropertyInfo>>();
             for (var depth = 0; depth < depthSerializedProperties.Count; depth++)
             {
@@ -23,7 +50,7 @@ namespace CGame.Editor
                     depthSerializedPropertyInfos.Add(new List<SerializedPropertyInfo>());
                 }
                 
-                foreach (var serializedProperty in depthSerializedProperties[depth])
+                foreach (var (serializedProperty, visible) in depthSerializedProperties[depth])
                 {
                     if (depth == 0)
                     {
@@ -33,6 +60,7 @@ namespace CGame.Editor
                             depthSerializedPropertyInfos[serializedProperty.depth].Add(
                                 new SerializedPropertyInfo(
                                     serializedProperty,
+                                    visible,
                                     fieldInfo,
                                     targetObject,
                                     null)
@@ -42,6 +70,7 @@ namespace CGame.Editor
                         {
                             depthSerializedPropertyInfos[serializedProperty.depth].Add(new SerializedPropertyInfo(
                                 serializedProperty,
+                                visible,
                                 null,
                                 null,
                                 null)
@@ -60,6 +89,7 @@ namespace CGame.Editor
                                 depthSerializedPropertyInfos[serializedProperty.depth].Add(
                                     new SerializedPropertyInfo(
                                         serializedProperty,
+                                        visible,
                                         fieldInfo,
                                         lastInfo.Value,
                                         lastInfo)
@@ -73,6 +103,7 @@ namespace CGame.Editor
                             depthSerializedPropertyInfos[serializedProperty.depth].Add(
                                 new SerializedPropertyInfo(
                                     serializedProperty,
+                                    visible,
                                     null,
                                     null,
                                     null)
@@ -81,27 +112,6 @@ namespace CGame.Editor
                     }
                 }
             }
-            return depthSerializedPropertyInfos;
-        }
-        
-        private static void Add(Object targetObject)
-        {
-            if (SerializedPropertyInfoDic.ContainsKey(targetObject))
-                return;
-            SerializedPropertyInfoDic.Add(targetObject, new List<SerializedPropertyInfo>());
-            
-            var serializedObject = new SerializedObject(targetObject);
-            
-            var depthSerializedProperties = new List<List<SerializedProperty>>();
-            var iterator = serializedObject.GetIterator();
-            while (iterator.Next(true))
-            {
-                if (depthSerializedProperties.Count <= iterator.depth)
-                    depthSerializedProperties.Add(new List<SerializedProperty>());
-                depthSerializedProperties[iterator.depth].Add(iterator.Copy());
-            }
-
-            var depthSerializedPropertyInfos = ToDepthSerializedPropertyInfos(depthSerializedProperties, targetObject);
             
             foreach (var serializedPropertyInfos in depthSerializedPropertyInfos)
             {
@@ -121,45 +131,6 @@ namespace CGame.Editor
         public static List<SerializedPropertyInfo> Get(SerializedObject serializedObject)
         {
             return Get(serializedObject.targetObject);
-        }
-        
-        private static void AddVisible(Object targetObject)
-        {
-            if (VisibleSerializedPropertyInfoDic.ContainsKey(targetObject))
-                return;
-            VisibleSerializedPropertyInfoDic.Add(targetObject, new List<SerializedPropertyInfo>());
-            
-            var serializedObject = new SerializedObject(targetObject);
-            
-            var depthSerializedProperties = new List<List<SerializedProperty>>();
-            var iterator = serializedObject.GetIterator();
-            while (iterator.NextVisible(true))
-            {
-                if (depthSerializedProperties.Count <= iterator.depth)
-                    depthSerializedProperties.Add(new List<SerializedProperty>());
-                depthSerializedProperties[iterator.depth].Add(iterator.Copy());
-            }
-
-            var depthSerializedPropertyInfos = ToDepthSerializedPropertyInfos(depthSerializedProperties, targetObject);
-            
-            foreach (var serializedPropertyInfos in depthSerializedPropertyInfos)
-            {
-                foreach (var serializedPropertyInfo in serializedPropertyInfos)
-                {
-                    VisibleSerializedPropertyInfoDic[targetObject].Add(serializedPropertyInfo);
-                }
-            }
-        }
-        
-        public static List<SerializedPropertyInfo> GetVisible(Object obj)
-        {
-            AddVisible(obj);
-            return VisibleSerializedPropertyInfoDic[obj];
-        }
-        
-        public static List<SerializedPropertyInfo> GetVisible(SerializedObject serializedObject)
-        {
-            return GetVisible(serializedObject.targetObject);
         }
     }
 }

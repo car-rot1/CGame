@@ -94,8 +94,8 @@ namespace CGame.Editor
                         false
                     });
                     
-                    _height += 2 + height;
-                    position.y += 2 + lastHeight;
+                    _height += EditorGUIExtension.ControlVerticalSpacing + height;
+                    position.y += EditorGUIExtension.ControlVerticalSpacing + lastHeight;
                     var propertyRect = new Rect(position.position, new Vector2(position.width, height));
                     propertyRect.xMin += 18;
 

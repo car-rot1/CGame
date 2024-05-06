@@ -27,8 +27,7 @@ namespace CGame.Editor
             {
                 var errorRect = position;
                 errorRect.xMin += EditorGUIUtility.labelWidth;
-                errorRect.y += 20;
-                errorRect.height = 18;
+                errorRect.y += EditorGUIExtension.ControlVerticalSpacing + 18;
                 EditorGUI.HelpBox(errorRect, $"{obj.GetType().Name}类并未实现{Attribute.interfaceType.Name}接口", MessageType.Error);
             }
         }
@@ -37,7 +36,7 @@ namespace CGame.Editor
         {
             var height = base.GetPropertyHeight(property, label);
             if (_isError)
-                height += 18 + 2;
+                height += EditorGUIExtension.ControlVerticalSpacing + 18;;
             return height;
         }
     }

@@ -118,18 +118,21 @@ namespace CGame.Editor
 
         private static void DrawMethodButton(object value, Type valueType, VisualElement containerElement)
         {
-            var method = valueType.GetMethod("GetEnumerator", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-            if (method != null)
+            if (value != null)
             {
-                var result = (IEnumerator)method.Invoke(value, new object[] { });
-                while (result.MoveNext())
+                var method = valueType.GetMethod("GetEnumerator", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                if (method != null)
                 {
-                    if (result.Current == null)
-                        continue;
-                    var go = result.Current;
-                    containerElement.Add(ButtonMethodDrawer.DrawElement(go, go.GetType()));
+                    var result = (IEnumerator)method.Invoke(value, new object[] { });
+                    while (result.MoveNext())
+                    {
+                        if (result.Current == null)
+                            continue;
+                        var go = result.Current;
+                        containerElement.Add(ButtonMethodDrawer.DrawElement(go, go.GetType()));
+                    }
+                    return;
                 }
-                return;
             }
 
             containerElement.Add(ButtonMethodDrawer.DrawElement(value, valueType));
