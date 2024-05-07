@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace CGame
 {
@@ -169,19 +170,27 @@ namespace CGame
         private static void StringToValueInit()
         {
             /*
-             *  var result = new T
-             *  {
-             *      result.num = value[0];
-             *      result.name = value[1];
-             *      result.IsActive = value[2];
-             *      ...
-             *  };
+             *  var result = FormatterServices.GetUninitializedObject(CurrentType);
+             * 
+             *  result.num = value[0];
+             *  result.name = value[1];
+             *  result.IsActive = value[2];
+             *  ...
              *
              *  return result;
              */
+            
+            var expressions = new List<Expression>();
+            
+            var result = Expression.Variable(CurrentType, "result");
+            var newResult = Expression.Call(
+                null,
+                typeof(FormatterServices).GetMethod("GetUninitializedObject", BindingFlags.Static | BindingFlags.Public)!,
+                Expression.Constant(CurrentType)
+            );
+            expressions.Add(Expression.Assign(result, Expression.Convert(newResult, CurrentType)));
+            
             var value = Expression.Parameter(typeof(List<string>), "value");
-            var memberBindingList = new List<MemberBinding>();
-
             var index = 0;
             foreach (var fieldInfo in CurrentType.GetFields(~BindingFlags.Static).Where(field => !Attribute.IsDefined(field, typeof(ObsoleteAttribute))))
             {
@@ -193,7 +202,7 @@ namespace CGame
                 
                 if (fieldInfo.FieldType == typeof(string))
                 {
-                    memberBindingList.Add(Expression.Bind(fieldInfo, makeIndex));
+                    expressions.Add(Expression.Assign(Expression.Field(result, fieldInfo.Name), makeIndex));
                     continue;
                 }
                 
@@ -209,7 +218,7 @@ namespace CGame
                     null,
                     makeIndex
                 );
-                memberBindingList.Add(Expression.Bind(fieldInfo, Expression.Convert(convertFromString, fieldInfo.FieldType)));
+                expressions.Add(Expression.Assign(Expression.Field(result, fieldInfo.Name), Expression.Convert(convertFromString, fieldInfo.FieldType)));
             }
 
             foreach (var propertyInfo in CurrentType.GetProperties(~BindingFlags.Static).Where(property => !Attribute.IsDefined(property, typeof(ObsoleteAttribute))))
@@ -222,7 +231,7 @@ namespace CGame
                 
                 if (propertyInfo.PropertyType == typeof(string))
                 {
-                    memberBindingList.Add(Expression.Bind(propertyInfo, makeIndex));
+                    expressions.Add(Expression.Assign(Expression.Property(result, propertyInfo.Name), makeIndex));
                     continue;
                 }
                 
@@ -238,12 +247,19 @@ namespace CGame
                     null,
                     makeIndex
                 );
-                memberBindingList.Add(Expression.Bind(propertyInfo, Expression.Convert(convertFromString, propertyInfo.PropertyType)));
+                expressions.Add(Expression.Assign(Expression.Field(result, propertyInfo.Name), Expression.Convert(convertFromString, propertyInfo.PropertyType)));
             }
-
-            var result = Expression.MemberInit(Expression.New(CurrentType), memberBindingList.ToArray());
-
-            StringToValue = Expression.Lambda<Func<List<string>, TValue>>(result, value).Compile();
+            
+            // return result;
+            var labelTarget = Expression.Label(CurrentType);
+            var labelExpression = Expression.Label(labelTarget, result);
+            var gotoExpression = Expression.Return(labelTarget, result, CurrentType);
+            
+            expressions.Add(gotoExpression);
+            expressions.Add(labelExpression);
+            
+            var block = Expression.Block(CurrentType, new[] { result }, expressions);
+            StringToValue = Expression.Lambda<Func<List<string>, TValue>>(block, value).Compile();
         }
 
         private static void GetAllMemberNameInit()

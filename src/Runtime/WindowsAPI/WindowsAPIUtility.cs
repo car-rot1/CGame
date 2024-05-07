@@ -52,10 +52,10 @@ namespace CGame
         private static readonly StringBuilder _stringBuilder = new();
 
         [DllImport("Comdlg32.dll", SetLastError = true, ThrowOnUnmappableChar = true, CharSet = CharSet.Auto)]
-        public static extern bool GetOpenFileName([In, Out] OpenFileName dialog);
+        private static extern bool GetOpenFileName([In, Out] OpenFileName dialog);
         
         [DllImport("Comdlg32.dll", SetLastError = true, ThrowOnUnmappableChar = true, CharSet = CharSet.Auto)]
-        public static extern bool GetSaveFileName([In, Out] OpenFileName dialog);
+        private static extern bool GetSaveFileName([In, Out] OpenFileName dialog);
         
         public static string OpenFilePanel(string title, string directory, params string[] extensions)
         {
@@ -133,6 +133,18 @@ namespace CGame
             dialog.maxFile = dialog.file.Length;
             
             return GetSaveFileName(dialog) ? dialog.file.Replace(Path.DirectorySeparatorChar, '/') : "";
+        }
+        
+        [DllImport("user32.dll", EntryPoint = "FindWindow")]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        private static readonly IntPtr ParentWnd = FindWindow(null, Application.productName);
+        
+        [DllImport("user32.dll")]
+        private static extern int SetWindowTextW(IntPtr hWnd, byte[] text);
+        
+        public static void ChangeTitleText(string text)
+        {
+            SetWindowTextW(ParentWnd, Encoding.Unicode.GetBytes(text + (char)0));
         }
     }
 }
