@@ -118,7 +118,7 @@ namespace CGame.Editor
 
         private static void DrawMethodButton(object value, Type valueType, VisualElement containerElement)
         {
-            if (value != null)
+            if (!value.Equals(null))
             {
                 var method = valueType.GetMethod("GetEnumerator", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
                 if (method != null)

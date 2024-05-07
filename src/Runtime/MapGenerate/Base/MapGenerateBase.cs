@@ -13,11 +13,13 @@ namespace CGame
             Vector2Int.left,
         };
 
+        public readonly int Seed;
         private int _seed;
 
         protected MapGenerateBase(int? seed)
         {
-            _seed = seed ?? new System.Random().Next(int.MinValue, int.MaxValue);
+            Seed = seed ?? new System.Random().Next(int.MinValue, int.MaxValue);
+            _seed = Seed;
         }
 
         public MapInfo Generate(RectInt range)

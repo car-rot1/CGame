@@ -7,10 +7,12 @@ namespace CGame
     public sealed class MapInfo
     {
         private readonly Dictionary<Vector2Int, RoomInfo> _allRoomDic;
+        public Vector2Int Start { get; private set; }
 
-        public MapInfo(int allRoomNum)
+        public MapInfo(int allRoomNum, Vector2Int start)
         {
             _allRoomDic = new Dictionary<Vector2Int, RoomInfo>(allRoomNum);
+            Start = start;
         }
 
         public void AddRoom(RoomInfo room) => _allRoomDic[room.position] = room;
@@ -64,6 +66,7 @@ namespace CGame
             var dic = new Dictionary<Vector2Int, RoomInfo>(_allRoomDic.Count);
 
             start ??= _allRoomDic.First(pair => pair.Value.depth == 0).Key;
+            Start = start.Value;
             
             var queue = new Queue<RoomInfo>();
 
@@ -108,6 +111,7 @@ namespace CGame
         public MapInfo RefreshDepth(Vector2Int? start = null)
         {
             start ??= _allRoomDic.First(pair => pair.Value.depth == 0).Key;
+            Start = start.Value;
             
             var currentRoomPositions = new HashSet<Vector2Int>(_allRoomDic.Count);
             var queue = new Queue<RoomInfo>();

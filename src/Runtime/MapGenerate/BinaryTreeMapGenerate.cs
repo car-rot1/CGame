@@ -20,7 +20,7 @@ namespace CGame
         protected override MapInfo GenerateMap(Vector2Int start, RectInt range)
         {
             var allRoomNum = (range.width + 1) * (range.height + 1);
-            var mapInfo = new MapInfo(allRoomNum);
+            var mapInfo = new MapInfo(allRoomNum, start);
             
             for (var i = range.xMin; i <= range.xMax; i++)
             for (var j = range.yMin; j <= range.yMax; j++)
