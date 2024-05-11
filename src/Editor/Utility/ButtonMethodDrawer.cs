@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
+using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -124,13 +125,12 @@ namespace CGame.Editor
             if (foldouts[foldoutIndex])
             {
                 foldoutIndex++;
-                rect.xMin += 15;
-                EditorGUIUtility.labelWidth -= 15;
+                rect.xMin += EditorGUIExtension.IndentPerLevel;
+                EditorGUIUtility.labelWidth -= EditorGUIExtension.IndentPerLevel;
                 var height = rect.height;
                 foreach (var fieldInfo in valueType.GetFields(All))
                 {
                     rect.y += height + EditorGUIExtension.ControlVerticalSpacing;
-                    
                     if (value == null)
                     {
                         valueSetter.Invoke(FormatterServices.GetUninitializedObject(valueType));
@@ -174,10 +174,15 @@ namespace CGame.Editor
                         box.Add(fieldElement);
                     }
 
-                    var button = new Button(() => methodInfo.Invoke(value, parameters.Count > 0 ? parameters.ToArray() : null))
+                    var button = new Button(() =>
                     {
+                        methodInfo.Invoke(value, parameters.Count > 0 ? parameters.ToArray() : null);
+                    })
+                    {
+                        focusable = false,
                         text = string.IsNullOrEmpty(cButtonAttribute.name) ? methodInfo.Name : cButtonAttribute.name
                     };
+                    
                     if (buttonSize != Vector2.zero)
                     {
                         button.style.width = buttonSize.x;

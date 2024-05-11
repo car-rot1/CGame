@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using UnityEditor;
+using UnityEngine;
 
 namespace CGame
 {
@@ -40,6 +41,37 @@ namespace CGame
         public static void SetExpandedRecurse(SerializedProperty property, bool expanded)
         {
             setExpandedRecurseMethodInfo.Invoke(null, new object[] { property, expanded });
+        }
+        
+        public static void DrawSolidRect(Rect rect, Color color, bool usePlaymodeTint = true)
+        {
+            if (Event.current.type != EventType.Repaint)
+                return;
+            
+            if (usePlaymodeTint)
+                EditorGUI.DrawRect(rect, color);
+            else
+            {
+                var currentColor = GUI.color;
+                GUI.color = color;
+                GUI.DrawTexture(rect, EditorGUIUtility.whiteTexture);
+                GUI.color = currentColor;
+            }
+        }
+        
+        public static void DrawBorders(Rect rect, int left, int right, int top, int bottom, Color color, bool usePlaymodeTint = true)
+        {
+            if (Event.current.type != EventType.Repaint)
+                return;
+
+            if (left > 0)
+                DrawSolidRect(new Rect(rect) { width = left }, color, usePlaymodeTint);
+            if (top > 0)
+                DrawSolidRect(new Rect(rect) { width = top }, color, usePlaymodeTint);
+            if (right > 0)
+                DrawSolidRect(new Rect(rect) { x = rect.x + rect.width - right, width = right }, color, usePlaymodeTint);
+            if (bottom > 0)
+                DrawSolidRect(new Rect(rect) { y = rect.y + rect.height - bottom, height = bottom }, color, usePlaymodeTint);
         }
     }
 }

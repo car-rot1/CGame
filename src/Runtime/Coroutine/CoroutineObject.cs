@@ -14,7 +14,7 @@ namespace CGame
         
         public static void StartCoroutine(IEnumerator coroutine)
         {
-            if (Application.isEditor)
+            if (!Application.isPlaying)
                 return;
             
             if (_coroutineComponent == null)

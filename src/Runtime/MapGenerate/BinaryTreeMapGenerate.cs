@@ -17,19 +17,18 @@ namespace CGame
                 _twoDirections[1] = Vector2Int.up;
         }
 
-        protected override MapInfo GenerateMap(Vector2Int start, RectInt range)
+        protected override MapInfo GenerateMap(Vector2Int start, int width, int height)
         {
-            var allRoomNum = (range.width + 1) * (range.height + 1);
-            var mapInfo = new MapInfo(allRoomNum, start);
+            var mapInfo = new MapInfo(width * height, start);
             
-            for (var i = range.xMin; i <= range.xMax; i++)
-            for (var j = range.yMin; j <= range.yMax; j++)
+            for (var i = 0; i < width; i++)
+            for (var j = 0; j < height; j++)
             {
                 mapInfo.AddRoom(new RoomInfo(new Vector2Int(i, j), Color.white));
             }
 
-            for (var i = range.xMin; i <= range.xMax; i++)
-            for (var j = range.yMin; j <= range.yMax; j++)
+            for (var i = 0; i < width; i++)
+            for (var j = 0; j < height; j++)
             {
                 var point = new Vector2Int(i, j);
                 var room = mapInfo.GetRoomInfo(point);
@@ -37,7 +36,7 @@ namespace CGame
                 foreach (var directionRandomIndex in directionRandomIndexes)
                 {
                     var targetPoint = point + _twoDirections[directionRandomIndex];
-                    if (!range.ContainsIncludeBorder(targetPoint))
+                    if (targetPoint.x < 0 || targetPoint.x >= width || targetPoint.y < 0 || targetPoint.y >= height)
                         continue;
 
                     mapInfo.ConnectRoom(room, (targetPoint - point).ToDirection());

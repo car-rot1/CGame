@@ -2,7 +2,8 @@ using CGame;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ProcessSlider : MonoBehaviour
+[RequireComponent(typeof(Slider))]
+public class SceneSwitchProcessSlider : MonoBehaviour
 {
     private Slider _slider;
 

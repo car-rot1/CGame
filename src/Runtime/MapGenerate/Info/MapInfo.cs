@@ -16,10 +16,16 @@ namespace CGame
         }
 
         public void AddRoom(RoomInfo room) => _allRoomDic[room.position] = room;
-        
-        public RoomInfo GetRoomInfo(Vector2Int position) => _allRoomDic[position];
+
+        public RoomInfo GetRoomInfo(Vector2Int position) => _allRoomDic.TryGetValue(position, out var roomInfo) ? roomInfo : null;
+        public bool TryGetRoomInfo(Vector2Int position, out RoomInfo roomInfo) => _allRoomDic.TryGetValue(position, out roomInfo);
 
         public IEnumerable<RoomInfo> AllRoom => _allRoomDic.Values;
+        
+        public bool ConnectRoom(Vector2Int roomPosition, Direction connectDirection)
+        {
+            return _allRoomDic.TryGetValue(roomPosition, out var room) && ConnectRoom(room, connectDirection);
+        }
         
         public bool ConnectRoom(RoomInfo room, Direction connectDirection)
         {
@@ -36,9 +42,9 @@ namespace CGame
             return true;
         }
         
-        public bool ConnectRoom(Vector2Int roomPosition, Direction connectDirection)
+        public bool DisConnectRoom(Vector2Int roomPosition, Direction disConnectDirection)
         {
-            return _allRoomDic.TryGetValue(roomPosition, out var room) && ConnectRoom(room, connectDirection);
+            return _allRoomDic.TryGetValue(roomPosition, out var room) && DisConnectRoom(room, disConnectDirection);
         }
         
         public bool DisConnectRoom(RoomInfo room, Direction disConnectDirection)
@@ -54,11 +60,6 @@ namespace CGame
             }
 
             return true;
-        }
-        
-        public bool DisConnectRoom(Vector2Int roomPosition, Direction disConnectDirection)
-        {
-            return _allRoomDic.TryGetValue(roomPosition, out var room) && DisConnectRoom(room, disConnectDirection);
         }
 
         public MapInfo RefreshRooms(Vector2Int? start = null)

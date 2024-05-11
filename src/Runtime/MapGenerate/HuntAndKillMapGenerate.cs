@@ -9,9 +9,9 @@ namespace CGame
         {
         }
 
-        protected override MapInfo GenerateMap(Vector2Int start, RectInt range)
+        protected override MapInfo GenerateMap(Vector2Int start, int width, int height)
         {
-            var allRoomNum = (range.width + 1) * (range.height + 1);
+            var allRoomNum = width * height;
             var mapInfo = new MapInfo(allRoomNum, start);
             
             var currentRoomPositions = new HashSet<Vector2Int>(allRoomNum);
@@ -28,7 +28,7 @@ namespace CGame
                 {
                     var targetPoint = lastPoint + directions[directionRandomIndexes[i]];
                     
-                    if (!range.ContainsIncludeBorder(targetPoint) || currentRoomPositions.Contains(targetPoint))
+                    if (targetPoint.x < 0 || targetPoint.x >= width || targetPoint.y < 0 || targetPoint.y >= height || currentRoomPositions.Contains(targetPoint))
                         continue;
                     currentRoomPositions.Add(targetPoint);
 
@@ -55,7 +55,7 @@ namespace CGame
                         {
                             var targetPoint = point + directions[directionRandomIndexes[i]];
                     
-                            if (!range.ContainsIncludeBorder(targetPoint) || currentRoomPositions.Contains(targetPoint))
+                            if (targetPoint.x < 0 || targetPoint.x >= width || targetPoint.y < 0 || targetPoint.y >= height || currentRoomPositions.Contains(targetPoint))
                                 continue;
                             currentRoomPositions.Add(targetPoint);
 

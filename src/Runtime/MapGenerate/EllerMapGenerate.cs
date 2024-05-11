@@ -15,29 +15,28 @@ namespace CGame
             _verticalNumRange = verticalNumRange;
         }
 
-        protected override MapInfo GenerateMap(Vector2Int start, RectInt range)
+        protected override MapInfo GenerateMap(Vector2Int start, int width, int height)
         {
-            var roomList = new List<HashSet<Vector2Int>>(range.width);
+            var roomList = new List<HashSet<Vector2Int>>(width);
             
-            var allRoomNum = (range.width + 1) * (range.height + 1);
-            var mapInfo = new MapInfo(allRoomNum, start);
+            var mapInfo = new MapInfo(width * height, start);
             
-            for (var i = range.xMin; i <= range.xMax; i++)
-            for (var j = range.yMin; j <= range.yMax; j++)
+            for (var i = 0; i < width; i++)
+            for (var j = 0; j < height; j++)
             {
                 mapInfo.AddRoom(new RoomInfo(new Vector2Int(i, j), Color.white));
             }
             
-            for (var i = range.yMin; i < range.yMax; i++)
+            for (var i = 0; i < height - 1; i++)
             {
-                for (var j = range.xMin; j <= range.xMax; j++)
+                for (var j = 0; j < width; j++)
                 {
                     var point = new Vector2Int(j, i);
                     if (roomList.FindIndex(hashSet => hashSet.Contains(point)) == -1)
                         roomList.Add(new HashSet<Vector2Int> { point });
                 }
-                var hNum = Mathf.Clamp(Random.Range(_horizontalNumRange.x, _horizontalNumRange.y + 1), 0, range.width + 1);
-                var randomXs = RandomExtension.MultiRange(range.xMin, range.xMax, hNum);
+                var hNum = Mathf.Clamp(Random.Range(_horizontalNumRange.x, _horizontalNumRange.y + 1), 0, width);
+                var randomXs = RandomExtension.MultiRange(0, width - 1, hNum);
                 foreach (var randomX in randomXs)
                 {
                     var point0 = new Vector2Int(randomX, i);
@@ -60,19 +59,15 @@ namespace CGame
                     {
                         var rowList = hashSet.Where(p => p.y == i).ToList();
                         var lastPoint = rowList.RandomItem();
-                        var lastRoom = mapInfo.GetRoomInfo(lastPoint);
                         hashSet.ExceptWith(rowList);
-                        var vNum = Mathf.Clamp(Random.Range(_verticalNumRange.x, _verticalNumRange.y + 1), 1, range.height - i);
+                        var vNum = Mathf.Clamp(Random.Range(_verticalNumRange.x, _verticalNumRange.y + 1), 1, height - 1 - i);
                         for (var j = 1; j <= vNum; j++)
                         {
                             var point = lastPoint + new Vector2Int(0, 1);
                             if (!hashSet.Contains(point))
                             {
                                 hashSet.Add(point);
-                                var room = mapInfo.GetRoomInfo(point);
-                                
-                                lastRoom.connectDirection |= (point - lastPoint).ToDirection();
-                                room.connectDirection |= (lastPoint - point).ToDirection();
+                                mapInfo.ConnectRoom(point, (lastPoint - point).ToDirection());
                             }
                             lastPoint = point;
                         }
@@ -80,12 +75,28 @@ namespace CGame
                 }
             }
 
-            for (var i = range.xMin; i < range.xMax; i++)
+            for (var i = 0; i < width; i++)
             {
-                var point0 = new Vector2Int(i, range.yMax);
-                var point1 = new Vector2Int(i + 1, range.yMax);
+                var point = new Vector2Int(i, height - 1);
+                if (roomList.FindIndex(hashSet => hashSet.Contains(point)) == -1)
+                    roomList.Add(new HashSet<Vector2Int> { point });
+            }
 
-                mapInfo.ConnectRoom(point0, (point1 - point0).ToDirection());
+            for (var i = 0; i < width - 1; i++)
+            {
+                var point0 = new Vector2Int(i, height - 1);
+                var point1 = new Vector2Int(i + 1, height - 1);
+                
+                var point0Index = roomList.FindIndex(hashSet => hashSet.Contains(point0));
+                var point1Index = roomList.FindIndex(hashSet => hashSet.Contains(point1));
+                
+                if (point0Index != point1Index)
+                {
+                    roomList[point0Index].UnionWith(roomList[point1Index]);
+                    roomList.RemoveAt(point1Index);
+                
+                    mapInfo.ConnectRoom(point0, (point1 - point0).ToDirection());
+                }
             }
             
             return mapInfo.RefreshDepth(start);

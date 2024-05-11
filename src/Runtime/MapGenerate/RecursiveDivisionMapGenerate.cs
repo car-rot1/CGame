@@ -9,18 +9,17 @@ namespace CGame
             
         }
 
-        protected override MapInfo GenerateMap(Vector2Int start, RectInt range)
+        protected override MapInfo GenerateMap(Vector2Int start, int width, int height)
         {
-            var allRoomNum = (range.width + 1) * (range.height + 1);
-            var mapInfo = new MapInfo(allRoomNum, start);
+            var mapInfo = new MapInfo(width * height, start);
             
-            for (var i = range.xMin; i <= range.xMax; i++)
-            for (var j = range.yMin; j <= range.yMax; j++)
+            for (var i = 0; i < width; i++)
+            for (var j = 0; j < height; j++)
             {
                 mapInfo.AddRoom(new RoomInfo(new Vector2Int(i, j), Color.white));
             }
-            
-            RecursiveDivision(mapInfo, range);
+
+            RecursiveDivision(mapInfo, new RectInt(0, 0, width - 1, height - 1));
 
             return mapInfo.RefreshDepth();
         }
