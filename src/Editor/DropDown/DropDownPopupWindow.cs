@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -25,7 +26,7 @@ namespace CGame.Editor
 
             private static readonly StringBuilder _stringBuilder = new();
         
-            public static DropDownTreeNode ToDropDownTreeNode(IEnumerable<string> contents)
+            public static DropDownTreeNode ToDropDownTreeNode(IEnumerable<string> contents, char splitChar = '/')
             {
                 var root = new DropDownTreeNode(null, null);
             
@@ -40,7 +41,7 @@ namespace CGame.Editor
                 {
                     var node = root;
                     _stringBuilder.Clear();
-                    var contentParts = content.Split('/');
+                    var contentParts = content.Split(splitChar);
                     foreach (var contentPart in contentParts)
                     {
                         _stringBuilder.Append(contentPart);
@@ -51,7 +52,7 @@ namespace CGame.Editor
                             node.children.Add(tempNode);
                         }
                         node = tempNode;
-                        _stringBuilder.Append('/');
+                        _stringBuilder.Append(splitChar);
                     }
                     node.hasValue = true;
                 }
@@ -59,9 +60,10 @@ namespace CGame.Editor
                 return root;
             }
         }
-        
+
         private readonly List<string> _allContent;
         private readonly Action<string> _callback;
+        private readonly char _splitChar;
         private readonly bool _hasSearch;
         private readonly bool _autoClose;
         
@@ -84,19 +86,20 @@ namespace CGame.Editor
         
         private readonly Dictionary<string, bool> _foldoutDic = new();
         private Vector2 _scrollPosition;
-
-        public static void Show(Rect activatorRect, IReadOnlyCollection<string> content, Action<string> callback, bool hasSearch = true, bool autoClose = true)
+        
+        public static void Show(Rect activatorRect, IReadOnlyCollection<string> content, Action<string> callback, char splitChar = '/', bool hasSearch = true, bool autoClose = true)
         {
             _width = activatorRect.width;
-            PopupWindow.Show(activatorRect, new DropDownPopupWindow(content, callback, hasSearch, autoClose));
+            PopupWindow.Show(activatorRect, new DropDownPopupWindow(content, callback, splitChar, hasSearch, autoClose));
         }
-
-        private DropDownPopupWindow(IReadOnlyCollection<string> contents, Action<string> callback, bool hasSearch = true, bool autoClose = true)
+        
+        private DropDownPopupWindow(IReadOnlyCollection<string> contents, Action<string> callback, char splitChar = '/', bool hasSearch = true, bool autoClose = true)
         {
             _allContent = new List<string>(contents);
-            _root = DropDownTreeNode.ToDropDownTreeNode(contents);
+            _root = DropDownTreeNode.ToDropDownTreeNode(contents, splitChar);
             
             _callback = callback;
+            _splitChar = splitChar;
             _hasSearch = hasSearch;
             _autoClose = autoClose;
         }
@@ -123,13 +126,13 @@ namespace CGame.Editor
                         contents = _allContent.Where(content => content.Contains(_inputSearchText, StringComparison.OrdinalIgnoreCase));
                         foreach (var s in contents)
                         {
-                            foreach (var s1 in s.Split('/'))
+                            foreach (var s1 in s.Split(_splitChar))
                             {
                                 _foldoutDic[s1] = true;
                             }
                         }
                     }
-                    _root = DropDownTreeNode.ToDropDownTreeNode(contents);
+                    _root = DropDownTreeNode.ToDropDownTreeNode(contents, _splitChar);
                 }
 
                 rect.yMin += SearchTextHeight;

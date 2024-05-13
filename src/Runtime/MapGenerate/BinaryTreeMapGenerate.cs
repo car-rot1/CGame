@@ -19,7 +19,7 @@ namespace CGame
 
         protected override MapInfo GenerateMap(Vector2Int start, int width, int height)
         {
-            var mapInfo = new MapInfo(width * height, start);
+            var mapInfo = new MapInfo(width, height, start);
             
             for (var i = 0; i < width; i++)
             for (var j = 0; j < height; j++)

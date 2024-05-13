@@ -11,10 +11,11 @@ namespace CGame
 
         protected override MapInfo GenerateMap(Vector2Int start, int width, int height)
         {
-            var allRoomNum = width * height;
-            var mapInfo = new MapInfo(allRoomNum, start);
+            var mapInfo = new MapInfo(width, height, start);
 
-            var currentRoomPositions = new HashSet<Vector2Int>(allRoomNum) { start };
+            var allRoomNum = width * height;
+            var currentRoomPositions = new Vector2IntBitArray(height, width);
+            currentRoomPositions.Add(start);
             var currentValidRoom = new List<(RoomInfo lastRoomInfo, Vector2Int currentPoint)>(allRoomNum * 3) { (null, start) };
             
             while (currentValidRoom.Count > 0)
@@ -40,7 +41,7 @@ namespace CGame
                 foreach (var direction in directions)
                 {
                     var targetPoint = currentPoint + direction;
-                    if (targetPoint.x < 0 || targetPoint.x >= width || targetPoint.y < 0 || targetPoint.y >= height || currentRoomPositions.Contains(targetPoint))
+                    if (targetPoint.x < 0 || targetPoint.x >= width || targetPoint.y < 0 || targetPoint.y >= height || currentRoomPositions.Check(targetPoint))
                         continue;
                     currentRoomPositions.Add(targetPoint);
                     currentValidRoom.Add((room, targetPoint));

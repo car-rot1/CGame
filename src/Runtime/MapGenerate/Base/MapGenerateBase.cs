@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace CGame
@@ -17,7 +19,6 @@ namespace CGame
     [Button]
     private void TTTTT()
     {
-        bool a = transform;
         var mapG = new EllerMapGenerate(new Vector2Int(1, 4), new Vector2Int(1, 4));
         _mapInfo = mapG.Generate(5, 5);
         seed = mapG.Seed;
@@ -40,6 +41,8 @@ namespace CGame
         }
     }
     */
+
+    
     
     public abstract class MapGenerateBase
     {

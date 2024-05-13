@@ -27,3 +27,9 @@ EditorGUIExtension新增了DrawSolidRect和DrawBorders方法；\
 优化并完善了DropDownPopupWindow；\
 优化了CButton的值判断；\
 将地图生成传入的参数从RectInt改为了int width和int height；
+
+v1.0.6：\
+新增了Vector2IntBitArray位数组类；\
+DropDownPopupWindow新增了自定义分隔符功能；\
+EditorGUIExtension新增了DrawBorders重载方法；\
+优化了地图生成类的算法；

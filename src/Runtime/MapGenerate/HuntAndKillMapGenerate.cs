@@ -11,9 +11,9 @@ namespace CGame
 
         protected override MapInfo GenerateMap(Vector2Int start, int width, int height)
         {
-            var allRoomNum = width * height;
-            var mapInfo = new MapInfo(allRoomNum, start);
+            var mapInfo = new MapInfo(width, height, start);
             
+            var allRoomNum = width * height;
             var currentRoomPositions = new HashSet<Vector2Int>(allRoomNum);
 
             var lastPoint = start;

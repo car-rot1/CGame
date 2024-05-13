@@ -11,16 +11,16 @@ namespace CGame
 
         protected override MapInfo GenerateMap(Vector2Int start, int width, int height)
         {
-            var allRoomNum = width * height;
-            var mapInfo = new MapInfo(allRoomNum, start);
+            var mapInfo = new MapInfo(width, height, start);
             
+            var allRoomNum = width * height;
             for (var i = 0; i < width; i++)
             for (var j = 0; j < height; j++)
             {
                 mapInfo.AddRoom(new RoomInfo(new Vector2Int(i, j), Color.white));
             }
             
-            var roomList = new List<HashSet<Vector2Int>>(allRoomNum);
+            var roomList = new List<Vector2IntBitArray>(allRoomNum);
             var wallList = new List<(Vector2Int point0, Vector2Int point1)>((height - 1) * width + (width - 1) * height);
             
             for (var i = 0; i < width; i++)
@@ -28,7 +28,9 @@ namespace CGame
             {
                 var point = new Vector2Int(i, j);
 
-                roomList.Add(new HashSet<Vector2Int> { point });
+                var vector2IntBitArray = new Vector2IntBitArray(height, width);
+                vector2IntBitArray.Add(point);
+                roomList.Add(vector2IntBitArray);
                 
                 var point0 = point + Vector2Int.right;
                 var point1 = point + Vector2Int.up;
@@ -42,8 +44,8 @@ namespace CGame
             {
                 var randomWall = wallList.RandomItem(out var randomIndex);
                 wallList.RemoveAt(randomIndex);
-                var point0Index = roomList.FindIndex(hashSet => hashSet.Contains(randomWall.point0));
-                var point1Index = roomList.FindIndex(hashSet => hashSet.Contains(randomWall.point1));
+                var point0Index = roomList.FindIndex(hashSet => hashSet.Check(randomWall.point0));
+                var point1Index = roomList.FindIndex(hashSet => hashSet.Check(randomWall.point1));
                 if (point0Index == point1Index)
                     continue;
 

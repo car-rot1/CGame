@@ -8,10 +8,14 @@ namespace CGame
     {
         private readonly Dictionary<Vector2Int, RoomInfo> _allRoomDic;
         public Vector2Int Start { get; private set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
 
-        public MapInfo(int allRoomNum, Vector2Int start)
+        public MapInfo(int width, int height, Vector2Int start)
         {
-            _allRoomDic = new Dictionary<Vector2Int, RoomInfo>(allRoomNum);
+            _allRoomDic = new Dictionary<Vector2Int, RoomInfo>(width * height);
+            Width = width;
+            Height = height;
             Start = start;
         }
 
@@ -77,14 +81,15 @@ namespace CGame
             startRoom.lastDirection = Direction.None;
             dic.Add(start.Value, startRoom);
             queue.Enqueue(startRoom);
-            
+
+            var points = new List<Vector2Int>(4);
             while (queue.Count > 0)
             {
                 var nowQueueLenght = queue.Count;
                 for (var i = 0; i < nowQueueLenght; i++)
                 {
                     var room = queue.Dequeue();
-                    var points = new List<Vector2Int>(4);
+                    points.Clear();
                     foreach (Direction direction in room.connectDirection)
                         points.Add(room.position + direction.ToVector());
                     foreach (var point in points)
@@ -114,7 +119,7 @@ namespace CGame
             start ??= _allRoomDic.First(pair => pair.Value.depth == 0).Key;
             Start = start.Value;
             
-            var currentRoomPositions = new HashSet<Vector2Int>(_allRoomDic.Count);
+            var currentRoomPositions = new Vector2IntBitArray(Height, Width);
             var queue = new Queue<RoomInfo>();
 
             var startRoom = _allRoomDic[start.Value];
@@ -123,19 +128,20 @@ namespace CGame
             startRoom.lastDirection = Direction.None;
             currentRoomPositions.Add(start.Value);
             queue.Enqueue(startRoom);
-            
+
+            var points = new List<Vector2Int>(4);
             while (queue.Count > 0)
             {
                 var nowQueueLenght = queue.Count;
                 for (var i = 0; i < nowQueueLenght; i++)
                 {
                     var room = queue.Dequeue();
-                    var points = new List<Vector2Int>(4);
+                    points.Clear();
                     foreach (Direction direction in room.connectDirection)
                         points.Add(room.position + direction.ToVector());
                     foreach (var point in points)
                     {
-                        if (currentRoomPositions.Contains(point))
+                        if (currentRoomPositions.Check(point))
                             continue;
                         
                         var nextRoom = _allRoomDic[point];

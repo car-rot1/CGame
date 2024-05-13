@@ -59,6 +59,8 @@ namespace CGame
             }
         }
         
+        public static void DrawBorders(Rect rect, int borderWidth, Color color, bool usePlaymodeTint = true) => DrawBorders(rect, borderWidth, borderWidth, borderWidth, borderWidth, color, usePlaymodeTint);
+        
         public static void DrawBorders(Rect rect, int left, int right, int top, int bottom, Color color, bool usePlaymodeTint = true)
         {
             if (Event.current.type != EventType.Repaint)
