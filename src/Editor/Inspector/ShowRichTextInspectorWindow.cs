@@ -63,35 +63,38 @@ namespace CGame.Editor
                     var serializedObject = (SerializedObject)inspectorElement.GetType()
                         .GetProperty("boundObject", BindingFlags.NonPublic | BindingFlags.Instance)
                         !.GetValue(inspectorElement);
-                    
-                    if (SerializedPropertyInfoUtility.Get(serializedObject).Any(serializedPropertyInfo =>
-                            serializedPropertyInfo.fieldInfo != null &&
-                            serializedPropertyInfo.fieldInfo.FieldType == typeof(string) &&
-                            serializedPropertyInfo.fieldInfo.GetCustomAttribute<ShowRichTextAttribute>() != null))
-                    {
-                        _isDraw = false;
-                        var action = headerIMGUIContainer.onGUIHandler;
-                        headerIMGUIContainer.onGUIHandler = () =>
-                        {
-                            var rect = headerIMGUIContainer.localBound;
-                            rect.x = rect.width - 80;
-                            rect.y = 0;
-                            rect.width = 80;
-                            rect.height = 22;
 
-                            var current = Event.current;
-                            if (rect.Contains(current.mousePosition) && current.type is EventType.MouseUp)
+                    foreach (var serializedPropertyInfo in SerializedPropertyInfoUtility.Get(serializedObject))
+                    {
+                        if (serializedPropertyInfo.fieldInfo != null &&
+                            serializedPropertyInfo.fieldInfo.FieldType == typeof(string) &&
+                            serializedPropertyInfo.fieldInfo.GetCustomAttribute<ShowRichTextAttribute>() != null)
+                        {
+                            _isDraw = false;
+                            var action = headerIMGUIContainer.onGUIHandler;
+                            headerIMGUIContainer.onGUIHandler = () =>
                             {
-                                EditorStyles.textField.richText = !EditorStyles.textField.richText;
-                                EditorStyles.textArea.richText = EditorStyles.textField.richText;
-                                current.Use();
-                                GUIUtility.hotControl = 0;
-                            }
+                                var rect = headerIMGUIContainer.localBound;
+                                rect.x = rect.width - 80;
+                                rect.y = 0;
+                                rect.width = 80;
+                                rect.height = 22;
+
+                                var current = Event.current;
+                                if (rect.Contains(current.mousePosition) && current.type is EventType.MouseUp)
+                                {
+                                    EditorStyles.textField.richText = !EditorStyles.textField.richText;
+                                    EditorStyles.textArea.richText = EditorStyles.textField.richText;
+                                    current.Use();
+                                    GUIUtility.hotControl = 0;
+                                }
                             
-                            action?.Invoke();
-                            EditorGUI.Toggle(rect, EditorStyles.textField.richText);
-                            _isDraw = true;
-                        };
+                                action?.Invoke();
+                                EditorGUI.Toggle(rect, EditorStyles.textField.richText);
+                                _isDraw = true;
+                            };
+                            break;
+                        }
                     }
                 }
             }

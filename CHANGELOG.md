@@ -50,3 +50,8 @@ v1.0.7：\
 
 v1.0.8：\
 新增了波函数塌缩算法以及相关示例；
+
+v1.0.9：\
+新增了PropertyHandlerExtension类，存放了PropertyHandler部分变量及方法；\
+为ScriptAttributeUtilityExtension新增了GetHandler方法；\
+删除了ShowScriptableObjectAttribute绘制类中多余的代码；

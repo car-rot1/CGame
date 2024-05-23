@@ -1,4 +1,3 @@
-using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,35 +9,8 @@ namespace CGame.Editor
         private float _height;
         private bool _foldout;
 
-        // private bool _init;
-        private MethodInfo _getHandler;
-        // private readonly Dictionary<SerializedProperty, object> _propertyHandleDic = new();
-        
-        // public override VisualElement CreatePropertyGUI(SerializedProperty property)
-        // {
-        //     if (_init)
-        //         return base.CreatePropertyGUI(property);
-        //
-        //     _init = true;
-        //     Init();
-        //     
-        //     return base.CreatePropertyGUI(property);
-        // }
-        //
-        // private void Init()
-        // {
-        //     var scriptAttributeUtilityType = typeof(UnityEditor.Editor).Assembly.GetType("UnityEditor.ScriptAttributeUtility");
-        //     _getHandler = scriptAttributeUtilityType.GetMethod("GetHandler", BindingFlags.Static | BindingFlags.NonPublic);
-        //     _propertyHandleDic.Clear();
-        // }
-
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            // if (!_init)
-            // {
-            //     _init = true;
-            //     Init();
-            // }
             _height = 0;
             
             var rect = position;
@@ -67,12 +39,6 @@ namespace CGame.Editor
             rect.y += EditorGUIExtension.ControlVerticalSpacing + 18;
             _height += EditorGUIExtension.ControlVerticalSpacing + 18;
             
-            if (_getHandler == null)
-            {
-                var scriptAttributeUtilityType = typeof(UnityEditor.Editor).Assembly.GetType("UnityEditor.ScriptAttributeUtility");
-                _getHandler = scriptAttributeUtilityType.GetMethod("GetHandler", BindingFlags.Static | BindingFlags.NonPublic);
-            }
-            
             EditorGUI.BeginChangeCheck();
             obj.UpdateIfRequiredOrScript();
 
@@ -83,11 +49,7 @@ namespace CGame.Editor
             {
                 using (new EditorGUI.DisabledScope("m_Script" == iterator.propertyPath))
                 {
-                    var handle = _getHandler!.Invoke(null, new object[] { iterator });
-                    var h = (float)handle!.GetType().GetMethod("GetHeight")?.Invoke(handle, new object[]
-                    {
-                        iterator, null, true
-                    })!;
+                    var h = ScriptAttributeUtilityExtension.GetHandler(iterator).GetHeight(iterator, null, true);
                     rect.height = h;
                     EditorGUI.PropertyField(rect, iterator, true);
                     rect.y += h + EditorGUIExtension.ControlVerticalSpacing;
