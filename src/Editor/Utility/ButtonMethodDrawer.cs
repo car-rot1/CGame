@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEditor.UIElements;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
@@ -177,6 +178,7 @@ namespace CGame.Editor
                     var button = new Button(() =>
                     {
                         methodInfo.Invoke(value, parameters.Count > 0 ? parameters.ToArray() : null);
+                        InternalEditorUtility.RepaintAllViews();
                     })
                     {
                         focusable = false,

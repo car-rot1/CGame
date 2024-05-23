@@ -11,21 +11,12 @@ using Object = UnityEngine.Object;
 
 namespace CGame
 {
-    public struct TaskInfo
-    {
-        public readonly ICustomAsyncTask AsyncTask;
-        public readonly string Name;
-
-        public TaskInfo(ICustomAsyncTask asyncTask, string name)
-        {
-            AsyncTask = asyncTask;
-            Name = name;
-        }
-    }
-
     public class SceneSwitch : SingletonClass<SceneSwitch>
     {
-        private readonly List<TaskInfo> taskInfoList = new();
+        private string[] sceneNames;
+        private readonly List<(Func<IEnumerator> task, string name)> taskList = new();
+        public Action<string> OnSwitchSceneBegin;
+        public Action<string> OnSwitchSceneEnd;
 
         public Action<float, float> OnProcessChange;
         private float _process;
@@ -45,27 +36,41 @@ namespace CGame
 
         protected override void Init()
         {
+            var count = SceneManager.sceneCountInBuildSettings;
+            sceneNames = new string[count];
+            for (var i = 0; i < count; i++)
+                sceneNames[i] = SceneUtility.GetScenePathByBuildIndex(i).Split('/')[^1].Split('.')[0];
+            
             _defaultLoadMaskGameObject = Resources.Load<GameObject>("LoadMask");
         }
 
-        public void AddTaskInfo(TaskInfo taskInfo) => taskInfoList.Add(taskInfo);
-
+        public void AddTask(Func<IEnumerator> task, string name) => taskList.Add((task, name));
+        public void RemoveTask(Func<IEnumerator> task, string name) => taskList.Remove((task, name));
+        
         public void LoadScene(string sceneName, GameObject loadMask = null, float loadMinTime = 1.5f, float loadSceneMix = 0.3f, float loadAssetMix = 0.3f)
         {
             if (loadMask == null)
                 loadMask = _defaultLoadMaskGameObject;
 
-            Debug.Log("kaishi");
             CoroutineObject.StartCoroutine(LoadSceneCoroutine(sceneName, loadMask, loadMinTime, loadSceneMix, loadAssetMix));
+        }
+        
+        public void LoadScene(int sceneIndex, GameObject loadMask = null, float loadMinTime = 1.5f, float loadSceneMix = 0.3f, float loadAssetMix = 0.3f)
+        {
+            if (loadMask == null)
+                loadMask = _defaultLoadMaskGameObject;
+
+            CoroutineObject.StartCoroutine(LoadSceneCoroutine(sceneNames[sceneIndex], loadMask, loadMinTime, loadSceneMix, loadAssetMix));
         }
 
         private IEnumerator LoadSceneCoroutine(string sceneName, GameObject loadMask, float loadMinTime, float loadSceneMix, float loadAssetMix)
         {
+            OnSwitchSceneBegin?.Invoke(sceneName);
+            
             var loadTimeMix = 1 - loadSceneMix - loadAssetMix;
 
             // GameGlobal.Pause();
             // Time.timeScale = 0;
-            Debug.Log("xiecheng");
             GameObject loadMaskGameObject;
             if (loadMask == null)
             {
@@ -109,16 +114,16 @@ namespace CGame
 
             yield return null;
             Debug.Log("加载需要的资源");
-            for (var i = 0; i < taskInfoList.Count; i++)
+            for (var i = 0; i < taskList.Count; i++)
             {
-                Debug.Log($"加载{taskInfoList[i].Name}中......");
+                Debug.Log($"加载{taskList[i].name}中......");
                 Debug.Log($"当前时间：{Time.unscaledTime}");
-                Process = loadSceneMix + (i + 1.0f) / taskInfoList.Count * loadAssetMix;
+                Process = loadSceneMix + (i + 1.0f) / taskList.Count * loadAssetMix;
                 Debug.Log("进度：" + Process);
                 Debug.Log($"当前时间：{Time.unscaledTime}");
-                yield return taskInfoList[i].AsyncTask.AsIEnumerator();
+                yield return taskList[i].task();
             }
-            taskInfoList.Clear();
+            taskList.Clear();
             Debug.Log("加载完毕");
 
             #endregion
@@ -146,6 +151,8 @@ namespace CGame
 
             // GameGlobal.Play();
             // Time.timeScale = 1;
+            
+            OnSwitchSceneEnd?.Invoke(sceneName);
         }
         
         /* 缺少宏定义判断来判断是否有UniTask包 */

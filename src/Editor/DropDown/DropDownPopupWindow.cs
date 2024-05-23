@@ -63,7 +63,7 @@ namespace CGame.Editor
 
         private readonly List<string> _allContent;
         private readonly Action<string> _callback;
-        private readonly char _splitChar;
+        private readonly char _separator;
         private readonly bool _hasSearch;
         private readonly bool _autoClose;
         
@@ -93,13 +93,13 @@ namespace CGame.Editor
             PopupWindow.Show(activatorRect, new DropDownPopupWindow(content, callback, splitChar, hasSearch, autoClose));
         }
         
-        private DropDownPopupWindow(IReadOnlyCollection<string> contents, Action<string> callback, char splitChar = '/', bool hasSearch = true, bool autoClose = true)
+        private DropDownPopupWindow(IReadOnlyCollection<string> contents, Action<string> callback, char separator = '/', bool hasSearch = true, bool autoClose = true)
         {
             _allContent = new List<string>(contents);
-            _root = DropDownTreeNode.ToDropDownTreeNode(contents, splitChar);
+            _root = DropDownTreeNode.ToDropDownTreeNode(contents, separator);
             
             _callback = callback;
-            _splitChar = splitChar;
+            _separator = separator;
             _hasSearch = hasSearch;
             _autoClose = autoClose;
         }
@@ -126,13 +126,13 @@ namespace CGame.Editor
                         contents = _allContent.Where(content => content.Contains(_inputSearchText, StringComparison.OrdinalIgnoreCase));
                         foreach (var s in contents)
                         {
-                            foreach (var s1 in s.Split(_splitChar))
+                            foreach (var s1 in s.Split(_separator))
                             {
                                 _foldoutDic[s1] = true;
                             }
                         }
                     }
-                    _root = DropDownTreeNode.ToDropDownTreeNode(contents, _splitChar);
+                    _root = DropDownTreeNode.ToDropDownTreeNode(contents, _separator);
                 }
 
                 rect.yMin += SearchTextHeight;

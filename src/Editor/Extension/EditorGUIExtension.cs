@@ -59,9 +59,9 @@ namespace CGame
             }
         }
         
-        public static void DrawBorders(Rect rect, int borderWidth, Color color, bool usePlaymodeTint = true) => DrawBorders(rect, borderWidth, borderWidth, borderWidth, borderWidth, color, usePlaymodeTint);
+        public static void DrawBorders(Rect rect, float borderWidth, Color color, bool usePlaymodeTint = true) => DrawBorders(rect, borderWidth, borderWidth, borderWidth, borderWidth, color, usePlaymodeTint);
         
-        public static void DrawBorders(Rect rect, int left, int right, int top, int bottom, Color color, bool usePlaymodeTint = true)
+        public static void DrawBorders(Rect rect, float left, float right, float top, float bottom, Color color, bool usePlaymodeTint = true)
         {
             if (Event.current.type != EventType.Repaint)
                 return;
@@ -69,7 +69,7 @@ namespace CGame
             if (left > 0)
                 DrawSolidRect(new Rect(rect) { width = left }, color, usePlaymodeTint);
             if (top > 0)
-                DrawSolidRect(new Rect(rect) { width = top }, color, usePlaymodeTint);
+                DrawSolidRect(new Rect(rect) { height = top }, color, usePlaymodeTint);
             if (right > 0)
                 DrawSolidRect(new Rect(rect) { x = rect.x + rect.width - right, width = right }, color, usePlaymodeTint);
             if (bottom > 0)

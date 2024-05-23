@@ -33,3 +33,17 @@ v1.0.6：\
 DropDownPopupWindow新增了自定义分隔符功能；\
 EditorGUIExtension新增了DrawBorders重载方法；\
 优化了地图生成类的算法；
+
+v1.0.7：\
+修改了DropDownPopupWindow的分隔符变量名；\
+将EditorGUIExtension绘制边框的参数从int改为了float，并修复了bug；\
+新增了ScriptAttributeUtilityExtension类，可使用ScriptAttributeUtility的方法；\
+优化了CButton的绘制，使其能绘制在最下方，并且CButton点击时会刷新页面；\
+修改了CsvFile属性面板绘制的命名空间；\
+新增了ShowRichText特性以及对应的Inspector绘制；\
+优化了单例拖拽限制的实现；\
+为Direction枚举新增了MainFour和OtherFour变量，为Direction扩展了新的ToString方法；\
+优化了Enum扩展中取余操作的实现，改为了使用位运算实现；\
+优化了Rect扩展中QuadSplit的实现；\
+将地图生成信息改为了可序列化，并把房间的类型改为了枚举（目前仅有起点和其他）；\
+修改了SceneSwitch添加加载任务的实现；

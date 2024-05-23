@@ -1,35 +1,73 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace CGame
 {
+    [Serializable]
     public sealed class MapInfo
     {
+        [JsonRequired] private readonly List<RoomInfo> allRoom;
         private readonly Dictionary<Vector2Int, RoomInfo> _allRoomDic;
+        
         public Vector2Int Start { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
 
         public MapInfo(int width, int height, Vector2Int start)
         {
+            allRoom = new List<RoomInfo>(width * height);
             _allRoomDic = new Dictionary<Vector2Int, RoomInfo>(width * height);
+            
             Width = width;
             Height = height;
             Start = start;
         }
 
-        public void AddRoom(RoomInfo room) => _allRoomDic[room.position] = room;
-
-        public RoomInfo GetRoomInfo(Vector2Int position) => _allRoomDic.TryGetValue(position, out var roomInfo) ? roomInfo : null;
-        public bool TryGetRoomInfo(Vector2Int position, out RoomInfo roomInfo) => _allRoomDic.TryGetValue(position, out roomInfo);
-
-        public IEnumerable<RoomInfo> AllRoom => _allRoomDic.Values;
-        
-        public bool ConnectRoom(Vector2Int roomPosition, Direction connectDirection)
+        public static string ToJson(MapInfo mapInfo, bool isIndented = false)
         {
-            return _allRoomDic.TryGetValue(roomPosition, out var room) && ConnectRoom(room, connectDirection);
+            var json = JsonConvert.SerializeObject(mapInfo);
+
+            if (!isIndented)
+                return json;
+            
+            var serializer = new JsonSerializer();
+            var tr = new StringReader(json);
+            var jtr = new JsonTextReader(tr);
+            var obj = serializer.Deserialize(jtr);
+            var textWriter = new StringWriter();
+            var jsonWriter = new JsonTextWriter(textWriter)
+            {
+                Formatting = Formatting.Indented,
+                Indentation = 4,
+                IndentChar = ' '
+            };
+            serializer.Serialize(jsonWriter, obj);
+
+            return textWriter.ToString();
         }
+
+        public static MapInfo ToMapInfo(string json)
+        {
+            var result = JsonConvert.DeserializeObject<MapInfo>(json);
+            foreach (var roomInfo in result.allRoom)
+            {
+                result._allRoomDic[roomInfo.position] = roomInfo;
+            }
+            return result;
+        }
+
+        public void AddRoom(RoomInfo room)
+        {
+            allRoom.Add(room);
+            _allRoomDic[room.position] = room;
+        }
+
+        public IEnumerable<RoomInfo> GetAllRoom() => allRoom;
+        public RoomInfo GetRoomInfo(Vector2Int position) => _allRoomDic.TryGetValue(position, out var roomInfo) ? roomInfo : null;
         
         public bool ConnectRoom(RoomInfo room, Direction connectDirection)
         {
@@ -37,18 +75,15 @@ namespace CGame
             {
                 if (room.connectDirection.HasFlag(direction))
                     continue;
+                
                 if (!_allRoomDic.TryGetValue(room.position + direction.ToVector(), out var connectRoom))
                     continue;
+                
                 room.connectDirection |= direction;
                 connectRoom.connectDirection |= direction.Reverse();
             }
 
             return true;
-        }
-        
-        public bool DisConnectRoom(Vector2Int roomPosition, Direction disConnectDirection)
-        {
-            return _allRoomDic.TryGetValue(roomPosition, out var room) && DisConnectRoom(room, disConnectDirection);
         }
         
         public bool DisConnectRoom(RoomInfo room, Direction disConnectDirection)
@@ -57,8 +92,10 @@ namespace CGame
             {
                 if (!room.connectDirection.HasFlag(direction))
                     continue;
+                
                 if (!_allRoomDic.TryGetValue(room.position + direction.ToVector(), out var disConnectRoom))
                     continue;
+                
                 room.connectDirection ^= direction;
                 disConnectRoom.connectDirection ^= direction.Reverse();
             }
@@ -76,7 +113,7 @@ namespace CGame
             var queue = new Queue<RoomInfo>();
 
             var startRoom = _allRoomDic[start.Value];
-            startRoom.color = Color.blue;
+            startRoom.type = RoomType.Start;
             startRoom.depth = 0;
             startRoom.lastDirection = Direction.None;
             dic.Add(start.Value, startRoom);
@@ -98,7 +135,7 @@ namespace CGame
                             continue;
                         
                         var nextRoom = _allRoomDic[point];
-                        nextRoom.color = Color.white;
+                        nextRoom.type = RoomType.Other;
                         nextRoom.depth = room.depth + 1;
                         nextRoom.lastDirection = (room.position - point).ToDirection();
                         dic.Add(point, nextRoom);
@@ -123,7 +160,7 @@ namespace CGame
             var queue = new Queue<RoomInfo>();
 
             var startRoom = _allRoomDic[start.Value];
-            startRoom.color = Color.blue;
+            startRoom.type = RoomType.Start;
             startRoom.depth = 0;
             startRoom.lastDirection = Direction.None;
             currentRoomPositions.Add(start.Value);
@@ -145,7 +182,7 @@ namespace CGame
                             continue;
                         
                         var nextRoom = _allRoomDic[point];
-                        nextRoom.color = Color.white;
+                        nextRoom.type = RoomType.Other;
                         nextRoom.depth = room.depth + 1;
                         nextRoom.lastDirection = (room.position - point).ToDirection();
                         currentRoomPositions.Add(point);

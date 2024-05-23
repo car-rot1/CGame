@@ -153,15 +153,37 @@ namespace CGame
             return result;
         }
         
-        public static Rect[] QuadSplit(this Rect self, int row, int column)
+        public static Rect[,] QuadSplitForSize(this Rect self, float width, float height)
+        {
+            var row = Mathf.FloorToInt(self.height / height);
+            var column = Mathf.FloorToInt(self.width / width);
+            if (row <= 1 && column <= 1)
+                return new[,] { { self, self } };
+            
+            var result = new Rect[row, column];
+            
+            var currentPosition = self.position;
+
+            for (var i = 0; i < row; i++)
+            {
+                for (var j = 0; j < column; j++)
+                {
+                    result[i, + j] = new Rect(currentPosition.x + j * width, currentPosition.y + i * height, width, height);
+                }
+            }
+
+            return result;
+        }
+        
+        public static Rect[,] QuadSplitForNum(this Rect self, int row, int column)
         {
             row = Mathf.Max(row, 1);
             column = Mathf.Max(column, 1);
 
             if (row == 1 && column == 1)
-                return new[] { self };
+                return new[,] { { self, self } };
             
-            var result = new Rect[row * column];
+            var result = new Rect[row, column];
             
             var width = self.width / column;
             var height = self.height / row;
@@ -171,12 +193,14 @@ namespace CGame
             {
                 for (var j = 0; j < column; j++)
                 {
-                    result[i * column + j] = new Rect(currentPosition.x + j * width, currentPosition.y + i * height, width, height);
+                    result[i, j] = new Rect(currentPosition.x + j * width, currentPosition.y + i * height, width, height);
                 }
             }
 
             return result;
         }
+        
+        
         
 #region Padding
         

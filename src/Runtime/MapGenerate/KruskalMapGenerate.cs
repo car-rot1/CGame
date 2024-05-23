@@ -17,7 +17,7 @@ namespace CGame
             for (var i = 0; i < width; i++)
             for (var j = 0; j < height; j++)
             {
-                mapInfo.AddRoom(new RoomInfo(new Vector2Int(i, j), Color.white));
+                mapInfo.AddRoom(new RoomInfo(new Vector2Int(i, j), RoomType.Other));
             }
             
             var roomList = new List<Vector2IntBitArray>(allRoomNum);
@@ -52,7 +52,7 @@ namespace CGame
                 roomList[point0Index].UnionWith(roomList[point1Index]);
                 roomList.RemoveAt(point1Index);
 
-                mapInfo.ConnectRoom(randomWall.point0, (randomWall.point1 - randomWall.point0).ToDirection());
+                mapInfo.ConnectRoom(mapInfo.GetRoomInfo(randomWall.point0), (randomWall.point1 - randomWall.point0).ToDirection());
             }
 
             return mapInfo.RefreshDepth(start);

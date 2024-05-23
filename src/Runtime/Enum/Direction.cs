@@ -6,7 +6,9 @@ namespace CGame
     public enum Direction
     {
         None = 0,
-        All = (1 << 8) - 1,
+        All = Up | RightUp | Right | RightDown | Down | LeftDown | Left | LeftUp,
+        MainFour = Up | Right | Down | Left,
+        OtherFour = RightUp | RightDown | LeftDown | LeftUp, 
         Up = 1 << 0,
         RightUp = 1 << 1,
         Right = 1 << 2,

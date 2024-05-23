@@ -6,7 +6,7 @@ namespace CGame.Editor
     [CustomPropertyDrawer(typeof(RequiredInterfaceMonoAttribute))]
     public class RequiredInterfaceMonoAttributeDrawer : PropertyDrawer
     {
-        private RequiredInterfaceMonoAttribute Attribute => (RequiredInterfaceMonoAttribute)base.attribute;
+        private RequiredInterfaceMonoAttribute Attribute => (RequiredInterfaceMonoAttribute)attribute;
 
         private bool _isError;
         

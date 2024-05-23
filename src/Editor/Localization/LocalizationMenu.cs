@@ -6,6 +6,7 @@ using CGame.Editor;
 using TMPro;
 #endif
 using UnityEditor;
+using UnityEditor.Callbacks;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,7 +22,7 @@ namespace CGame.Localization.Editor
             _config = LocalizationConfig.Instance;
         }
         
-        [UnityEditor.Callbacks.OnOpenAsset(1)]
+        [OnOpenAsset(1)]
         public static bool OnOpenAsset(int instanceID, int line)
         {
             if (EditorUtility.InstanceIDToObject(instanceID) is LanguageTextSO languageTextSo)

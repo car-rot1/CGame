@@ -26,9 +26,9 @@ namespace CGame
     
     private void OnDrawGizmos()
     {
-        if (_mapInfo == null)
+        if (_mapInfo?.GetAllRoom() == null)
             return;
-        foreach (var roomInfo in _mapInfo.AllRoom)
+        foreach (var roomInfo in _mapInfo.GetAllRoom())
         {
             var position = roomInfo.position + (Vector2)transform.position;
             Gizmos.color = roomInfo.depth == depth ? Color.black : Color.white; 

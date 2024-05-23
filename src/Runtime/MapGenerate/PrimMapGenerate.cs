@@ -27,14 +27,14 @@ namespace CGame
                 RoomInfo room;
                 if (lastRoom != null)
                 {
-                    room = new RoomInfo(currentPoint, Color.white, lastRoom.depth + 1, (lastRoom.position - currentPoint).ToDirection());
+                    room = new RoomInfo(currentPoint, RoomType.Other, lastRoom.depth + 1, (lastRoom.position - currentPoint).ToDirection());
 
                     lastRoom.connectDirection |= (currentPoint - lastRoom.position).ToDirection();
                     room.connectDirection |= (lastRoom.position - currentPoint).ToDirection();
                 }
                 else
                 {
-                    room = new RoomInfo(currentPoint, Color.blue);
+                    room = new RoomInfo(currentPoint, RoomType.Start);
                 }
                     
                 mapInfo.AddRoom(room);

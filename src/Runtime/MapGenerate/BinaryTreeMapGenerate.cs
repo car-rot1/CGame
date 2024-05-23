@@ -24,7 +24,7 @@ namespace CGame
             for (var i = 0; i < width; i++)
             for (var j = 0; j < height; j++)
             {
-                mapInfo.AddRoom(new RoomInfo(new Vector2Int(i, j), Color.white));
+                mapInfo.AddRoom(new RoomInfo(new Vector2Int(i, j), RoomType.Other));
             }
 
             for (var i = 0; i < width; i++)

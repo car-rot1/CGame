@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace CGame.Editor
 {
+    //todo 这个在搜索过程中可以利用SerializedProperty的Path属性；
     public static class SerializedPropertyInfoUtility
     {
         private const BindingFlags AllBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
@@ -85,7 +86,6 @@ namespace CGame.Editor
                             fieldInfo = lastInfo.fieldInfo.FieldType.GetField(serializedProperty.name, AllBindingFlags);
                             if (fieldInfo != null)
                             {
-
                                 depthSerializedPropertyInfos[serializedProperty.depth].Add(
                                     new SerializedPropertyInfo(
                                         serializedProperty,

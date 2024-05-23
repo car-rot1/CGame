@@ -21,7 +21,7 @@ namespace CGame
             stack.Push(start);
 
             var depth = 0;
-            mapInfo.AddRoom(new RoomInfo(start, Color.blue));
+            mapInfo.AddRoom(new RoomInfo(start, RoomType.Start));
             
             while (currentRoomPositions.Count < allRoomNum)
             {
@@ -41,7 +41,7 @@ namespace CGame
                     depth++;
                     
                     var lastRoom = mapInfo.GetRoomInfo(lastPoint);
-                    var room = new RoomInfo(targetPoint, Color.white, depth, (lastPoint - targetPoint).ToDirection());
+                    var room = new RoomInfo(targetPoint, RoomType.Other, depth, (lastPoint - targetPoint).ToDirection());
 
                     lastRoom.connectDirection |= (targetPoint - lastPoint).ToDirection();
                     room.connectDirection |= (lastPoint - targetPoint).ToDirection();

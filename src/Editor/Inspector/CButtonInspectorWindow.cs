@@ -1,13 +1,10 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Object = UnityEngine.Object;
 
 namespace CGame.Editor
 {
@@ -20,16 +17,19 @@ namespace CGame.Editor
         static CButtonInspectorWindow()
         {
             EditorApplication.update += OnUpdate;
-            Selection.selectionChanged += SelectionChanged;
+            Selection.selectionChanged += () => _isDraw = false;
         }
+        
+        private static bool _isDraw;
 
-        private static async void OnUpdate()
+        private static void OnUpdate()
         {
-            if (Selection.count > 1)
-                return;
+            // if (Selection.count > 1)
+            //     return;
             
             if (_currentInspectorWindow == null)
             {
+                _isDraw = false;
                 var inspectorWindows = Resources.FindObjectsOfTypeAll(InspectorWindowType);
                 _currentInspectorWindow = inspectorWindows.Length > 0 ? (EditorWindow)inspectorWindows[0] : null;
                 
@@ -53,13 +53,13 @@ namespace CGame.Editor
                 //         text = "哈哈哈哈哈"
                 //     });
                 // }
-
-                await Task.Delay(1000);
-                SelectionChanged();
             }
+            
+            if (!_isDraw)
+                RebuildInspector();
         }
 
-        private static void SelectionChanged()
+        private static void RebuildInspector()
         {
             // if (Selection.count > 1)
             //     return;
@@ -79,15 +79,18 @@ namespace CGame.Editor
                     !.GetValue(_currentInspectorWindow);
                 var inspectorEditorsListElement = _currentInspectorWindow.rootVisualElement.Q(null, className);
                 
+                if (inspectorEditorsListElement.childCount <= 0)
+                    return;
+                
                 // for (var i = 1; i < editorElements.Count; i++)
                 for (var i = 1; i < inspectorEditorsListElement.childCount; i++)
                 {
                     var element = inspectorEditorsListElement[i];
                     if (element.childCount < 3)
-                        continue;
+                        return;
                     
                     if (element[1] is not InspectorElement inspectorElement)
-                        continue;
+                        return;
                     
                     var serializedObject = (SerializedObject)inspectorElement.GetType()
                         .GetProperty("boundObject", BindingFlags.NonPublic | BindingFlags.Instance)
@@ -95,7 +98,7 @@ namespace CGame.Editor
                     
                     var myElement = new VisualElement
                     {
-                        name = "MyElement",
+                        name = "CButtonElement",
                         style =
                         {
                             marginLeft = 18,
@@ -111,8 +114,10 @@ namespace CGame.Editor
                     }
                     
                     if (myElement.childCount > 0)
-                        inspectorElement.Add(myElement);
+                        element.Insert(2, myElement);
                 }
+
+                _isDraw = true;
             }
         }
 
@@ -129,13 +134,17 @@ namespace CGame.Editor
                         if (result.Current == null)
                             continue;
                         var go = result.Current;
-                        containerElement.Add(ButtonMethodDrawer.DrawElement(go, go.GetType()));
+                        var listElement = ButtonMethodDrawer.DrawElement(go, go.GetType());
+                        if (listElement.childCount > 0)
+                            containerElement.Add(listElement);
                     }
                     return;
                 }
             }
 
-            containerElement.Add(ButtonMethodDrawer.DrawElement(value, valueType));
+            var element = ButtonMethodDrawer.DrawElement(value, valueType);
+            if (element.childCount > 0)
+                containerElement.Add(element);
         }
     }
 }

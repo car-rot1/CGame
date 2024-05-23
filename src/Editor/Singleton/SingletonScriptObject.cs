@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace CGame.Editor
 {
+    [CreateAssetMenu]
     public class SingletonScriptObject<T> : ScriptableObject where T : SingletonScriptObject<T>
     {
         private static readonly Lazy<T> LazyInstance = new(GetInstance);

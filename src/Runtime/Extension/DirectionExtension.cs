@@ -1,10 +1,23 @@
 using System;
+using System.Text;
 using UnityEngine;
 
 namespace CGame
 {
     public static class DirectionExtension
     {
+        public static string ToString(this Direction direction, char separator)
+        {
+            var s = new StringBuilder();
+            foreach (Direction d in direction)
+            {
+                s.Append(d);
+                s.Append(separator);
+            }
+            s.Remove(s.Length - 1, 1);
+            return s.ToString();
+        }
+        
         public static Direction ToDirection(this Vector2Int self)
         {
             return self switch

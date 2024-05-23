@@ -1,0 +1,25 @@
+using System;
+using System.Reflection;
+using UnityEditor;
+
+namespace CGame
+{
+    public static class ScriptAttributeUtilityExtension
+    {
+        private static readonly Type _scriptAttributeUtilityType;
+
+        static ScriptAttributeUtilityExtension()
+        {
+            _scriptAttributeUtilityType = typeof(UnityEditor.Editor).Assembly.GetType("UnityEditor.ScriptAttributeUtility");
+        }
+        
+        private static MethodInfo _getDrawerTypeForPropertyAndTypeMethodInfo;
+        
+        public static Type GetDrawerTypeForPropertyAndType(SerializedProperty property, Type type)
+        {
+            if (_getDrawerTypeForPropertyAndTypeMethodInfo == null)
+                _getDrawerTypeForPropertyAndTypeMethodInfo = _scriptAttributeUtilityType.GetMethod("GetDrawerTypeForPropertyAndType", BindingFlags.Static | BindingFlags.NonPublic);
+            return (Type)_getDrawerTypeForPropertyAndTypeMethodInfo!.Invoke(null, new object[] { property, type });
+        }
+    }
+}

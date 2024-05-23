@@ -5,11 +5,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using CGame.Localization;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace CGame.Localization.Editor
+namespace CGame.Editor
 {
     [InitializeOnLoad]
     public static class CsvFileInspectorWindow

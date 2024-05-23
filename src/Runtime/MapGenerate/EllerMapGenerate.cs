@@ -24,7 +24,7 @@ namespace CGame
             for (var i = 0; i < width; i++)
             for (var j = 0; j < height; j++)
             {
-                mapInfo.AddRoom(new RoomInfo(new Vector2Int(i, j), Color.white));
+                mapInfo.AddRoom(new RoomInfo(new Vector2Int(i, j), RoomType.Other));
             }
             
             for (var i = 0; i < height - 1; i++)
@@ -50,7 +50,7 @@ namespace CGame
                         roomList[point0Index].UnionWith(roomList[point1Index]);
                         roomList.RemoveAt(point1Index);
 
-                        mapInfo.ConnectRoom(point0, (point1 - point0).ToDirection());
+                        mapInfo.ConnectRoom(mapInfo.GetRoomInfo(point0), (point1 - point0).ToDirection());
                     }
                 }
                 foreach (var hashSet in roomList)
@@ -67,7 +67,7 @@ namespace CGame
                             if (!hashSet.Contains(point))
                             {
                                 hashSet.Add(point);
-                                mapInfo.ConnectRoom(point, (lastPoint - point).ToDirection());
+                                mapInfo.ConnectRoom(mapInfo.GetRoomInfo(point), (lastPoint - point).ToDirection());
                             }
                             lastPoint = point;
                         }
@@ -95,7 +95,7 @@ namespace CGame
                     roomList[point0Index].UnionWith(roomList[point1Index]);
                     roomList.RemoveAt(point1Index);
                 
-                    mapInfo.ConnectRoom(point0, (point1 - point0).ToDirection());
+                    mapInfo.ConnectRoom(mapInfo.GetRoomInfo(point0), (point1 - point0).ToDirection());
                 }
             }
             

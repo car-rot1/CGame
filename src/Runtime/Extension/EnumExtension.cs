@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace CGame
 {
@@ -25,7 +26,8 @@ namespace CGame
             foreach (Enum value in Enum.GetValues(self.GetType()))
             {
                 var valueInt = value.ToInt();
-                if (valueInt != 0 && (valueInt == 1 || valueInt % 2 == 0) && self.HasFlag(value))
+                
+                if (valueInt != 0 && (valueInt == 1 || (valueInt & 1) == 0) && self.HasFlag(value))
                 {
                     yield return value;
                 }

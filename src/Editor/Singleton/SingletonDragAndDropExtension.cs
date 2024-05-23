@@ -16,6 +16,7 @@ namespace CGame.Editor
         private static DragAndDropVisualMode HierarchyDropHandler(int dropTargetInstanceID, HierarchyDropFlags dropMode, Transform parentForDraggedObjects, bool perform)
         {
             var singletonMonoBehaviours = StageUtility.GetCurrentStageHandle().FindComponentsOfType<SingletonMonoBehaviour>();
+            
             foreach (var objectReference in DragAndDrop.objectReferences)
             {
                 switch (objectReference)
@@ -35,7 +36,7 @@ namespace CGame.Editor
                     {
                         if (gameObject.TryGetComponent<SingletonMonoBehaviour>(out var targetSingletonMonoBehaviour))
                         {
-                            if (singletonMonoBehaviours.Any(singletonMonoBehaviour => targetSingletonMonoBehaviour.GetType() == singletonMonoBehaviour.GetType()))
+                            if (singletonMonoBehaviours.Any(singletonMonoBehaviour => targetSingletonMonoBehaviour != singletonMonoBehaviour && targetSingletonMonoBehaviour.GetType() == singletonMonoBehaviour.GetType()))
                             {
                                 return DragAndDropVisualMode.Rejected;
                             }

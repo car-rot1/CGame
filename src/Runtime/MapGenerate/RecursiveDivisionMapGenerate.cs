@@ -16,7 +16,7 @@ namespace CGame
             for (var i = 0; i < width; i++)
             for (var j = 0; j < height; j++)
             {
-                mapInfo.AddRoom(new RoomInfo(new Vector2Int(i, j), Color.white));
+                mapInfo.AddRoom(new RoomInfo(new Vector2Int(i, j), RoomType.Other));
             }
 
             RecursiveDivision(mapInfo, new RectInt(0, 0, width - 1, height - 1));
@@ -33,7 +33,7 @@ namespace CGame
                     var point0 = new Vector2Int(range.xMin, range.yMin + i);
                     var point1 = new Vector2Int(range.xMin, range.yMin + i + 1);
                     
-                    mapInfo.ConnectRoom(point0, (point1 - point0).ToDirection());
+                    mapInfo.ConnectRoom(mapInfo.GetRoomInfo(point0), (point1 - point0).ToDirection());
                 }
 
                 for (var i = 0; i < range.width; i++)
@@ -41,7 +41,7 @@ namespace CGame
                     var point0 = new Vector2Int(range.xMin + i, range.yMin);
                     var point1 = new Vector2Int(range.xMin + i + 1, range.yMin);
                 
-                    mapInfo.ConnectRoom(point0, (point1 - point0).ToDirection());
+                    mapInfo.ConnectRoom(mapInfo.GetRoomInfo(point0), (point1 - point0).ToDirection());
                 }
                 return;
             }
@@ -64,14 +64,14 @@ namespace CGame
                     var point0 = points[i];
                     var point1 = points[i] + Vector2Int.up;
                     
-                    mapInfo.ConnectRoom(point0, (point1 - point0).ToDirection());
+                    mapInfo.ConnectRoom(mapInfo.GetRoomInfo(point0), (point1 - point0).ToDirection());
                 }
                 else
                 {
                     var point0 = points[i];
                     var point1 = points[i] + Vector2Int.right;
                     
-                    mapInfo.ConnectRoom(point0, (point1 - point0).ToDirection());
+                    mapInfo.ConnectRoom(mapInfo.GetRoomInfo(point0), (point1 - point0).ToDirection());
                 }
             }
             
