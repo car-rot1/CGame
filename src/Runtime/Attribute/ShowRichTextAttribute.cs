@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace CGame
 {
-    [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
     public class ShowRichTextAttribute : PropertyAttribute
     {
         
