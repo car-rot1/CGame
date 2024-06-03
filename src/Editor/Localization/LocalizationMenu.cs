@@ -70,7 +70,7 @@ namespace CGame.Localization.Editor
             {
                 var path = AssetDatabase.GetAssetPath(target);
                 
-                if (path.GetPathState().ContainsAll(PathState.Directory, PathState.Exist))
+                if (path.GetPathState().ContainsAll(PathState.Directory | PathState.Exist))
                     newAssetFilePathWithName = AssetDatabase.GenerateUniqueAssetPath(path + '/' + nameof(LanguageTextSO) + ".asset");
                 else
                 {
@@ -123,7 +123,7 @@ namespace CGame.Localization.Editor
             else
             {
                 var foldTargets = targets
-                    .Where(target => AssetDatabase.GetAssetPath(target).GetPathState().ContainsAll(PathState.Directory, PathState.Exist))
+                    .Where(target => AssetDatabase.GetAssetPath(target).GetPathState().ContainsAll(PathState.Directory | PathState.Exist))
                     .ToList();
 
                 if (foldTargets.Count <= 0)

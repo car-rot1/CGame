@@ -2,7 +2,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace CGame
+namespace CGame.Editor
 {
     public static class AssetDatabaseExtension
     {

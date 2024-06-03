@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace CGame
 {
@@ -9,16 +8,16 @@ namespace CGame
     {
         public static int ToInt(this Enum self) => self.GetHashCode();
 
-        public static bool ContainsAny(this Enum self, params Enum[] values)
+        public static bool ContainsAny(this Enum self, Enum value)
         {
             var selfInt = ToInt(self);
-            return values.Select(ToInt).Any(valueInt => (selfInt & valueInt) != 0);
+            var valueInt = ToInt(value);
+            return (selfInt & valueInt) != 0;
         }
         
-        public static bool ContainsAll(this Enum self, params Enum[] values)
+        public static bool ContainsAll(this Enum self, Enum value)
         {
-            var selfInt = ToInt(self);
-            return values.Select(ToInt).All(valueInt => (selfInt & valueInt) != 0);
+            return self.HasFlag(value);
         }
 
         public static IEnumerator<Enum> GetEnumerator(this Enum self)

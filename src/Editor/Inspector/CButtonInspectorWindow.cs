@@ -89,7 +89,7 @@ namespace CGame.Editor
                     if (element.childCount < 3)
                         return;
                     
-                    if (element[1] is not InspectorElement inspectorElement)
+                    if (element[1] is not InspectorElement { childCount: > 2 } inspectorElement)
                         return;
                     
                     var serializedObject = (SerializedObject)inspectorElement.GetType()
@@ -114,7 +114,7 @@ namespace CGame.Editor
                     }
                     
                     if (myElement.childCount > 0)
-                        element.Insert(2, myElement);
+                        inspectorElement.Add(myElement);
                 }
 
                 _isDraw = true;

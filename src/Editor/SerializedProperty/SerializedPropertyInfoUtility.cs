@@ -124,12 +124,16 @@ namespace CGame.Editor
 
         public static List<SerializedPropertyInfo> Get(Object obj)
         {
+            if (obj == null)
+                return null;
             Add(obj);
             return SerializedPropertyInfoDic[obj];
         }
         
         public static List<SerializedPropertyInfo> Get(SerializedObject serializedObject)
         {
+            if (serializedObject == null)
+                return null;
             return Get(serializedObject.targetObject);
         }
     }

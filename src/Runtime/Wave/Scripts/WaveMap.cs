@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
 using CGame;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class WaveBlockInfo
@@ -39,9 +37,8 @@ public class WaveMap : MonoBehaviour, ISerializationCallbackReceiver
         };
     }
 
-    public WaveBlockInfo[,] allWaveBlockInfo;
-    public Transform waveBlockInfoPrefab;
-    private Transform[,] allWaveBlockInfoGameObject;
+    private WaveBlockInfo[,] allWaveBlockInfo;
+    private MergeWaveBlock[,] allMergeWaveBlock;
 
     private void Awake()
     {
@@ -52,7 +49,7 @@ public class WaveMap : MonoBehaviour, ISerializationCallbackReceiver
     public int seed;
     public bool lockSeed;
     
-    [Button]
+    [CButton]
     private void Init()
     {
         if (_init)
@@ -93,16 +90,19 @@ public class WaveMap : MonoBehaviour, ISerializationCallbackReceiver
         Random.InitState(seed);
 
         allWaveBlockInfo = new WaveBlockInfo[width, height];
-        allWaveBlockInfoGameObject = new Transform[width, height];
+        allMergeWaveBlock = new MergeWaveBlock[width, height];
+        var go = WaveFunctionCollapseUtility.MergeWaveBlocks(allWaveBlock, new Vector2(1f, 1f), 1f / Mathf.CeilToInt(Mathf.Sqrt(allWaveBlock.Length)) * Vector2.one);
         for (var i = 0; i < allWaveBlockInfo.GetLength(0); i++)
         {
             for (var j = 0; j < allWaveBlockInfo.GetLength(1); j++)
             {
                 allWaveBlockInfo[i, j] = new WaveBlockInfo(new Vector2Int(i, j), new List<WaveBlock>(allWaveBlock));
-                allWaveBlockInfoGameObject[i, j] = Instantiate(waveBlockInfoPrefab, transform);
-                allWaveBlockInfoGameObject[i, j].position = new Vector3(i * xOffset, j * yOffset);
+                allMergeWaveBlock[i, j] = Instantiate(go, transform);
+                allMergeWaveBlock[i, j].transform.position = new Vector3(i * xOffset, j * yOffset);
+                allMergeWaveBlock[i, j].Init();
             }
         }
+        DestroyImmediate(go.gameObject);
 
         for (var i = 0; i < allWaveBlockInfo.GetLength(0); i++)
         {
@@ -174,20 +174,14 @@ public class WaveMap : MonoBehaviour, ISerializationCallbackReceiver
 
                 if (allWaveBlockInfo[i, j].isSet)
                 {
-                    allWaveBlockInfoGameObject[i, j].gameObject.SetActive(false);
+                    allMergeWaveBlock[i, j].gameObject.SetActive(false);
                 }
                 else
                 {
-                    foreach (Transform o in allWaveBlockInfoGameObject[i, j].transform)
+                    allMergeWaveBlock[i, j].HideAll();
+                    foreach (var waveBlock in allWaveBlockInfo[i, j].waveBlocks)
                     {
-                        if (o.TryGetComponent<WaveBlock>(out var w))
-                        {
-                            o.gameObject.SetActive(false);
-                            if (allWaveBlockInfo[i, j].waveBlocks.Any(waveBlock => w.name == waveBlock.name))
-                            {
-                                o.gameObject.SetActive(true);
-                            }
-                        }
+                        allMergeWaveBlock[i, j].ShowItem(waveBlock);
                     }
                 }
                 ChangeAllBlock(allWaveBlockInfo[i, j]);
@@ -195,7 +189,7 @@ public class WaveMap : MonoBehaviour, ISerializationCallbackReceiver
         }
     }
 
-    [Button]
+    [CButton]
     public void All()
     {
         Init();
@@ -221,7 +215,7 @@ public class WaveMap : MonoBehaviour, ISerializationCallbackReceiver
         }
     }
 
-    [Button]
+    [CButton]
     private void SetBlock(int i, int j)
     {
         Init();
@@ -239,7 +233,7 @@ public class WaveMap : MonoBehaviour, ISerializationCallbackReceiver
         allWaveBlockInfo[i, j].waveBlocks.Clear();
         allWaveBlockInfo[i, j].waveBlocks.Add(waveBlockPrefab);
 
-        allWaveBlockInfoGameObject[i, j].gameObject.SetActive(false);
+        allMergeWaveBlock[i, j].gameObject.SetActive(false);
         ChangeAllBlock(allWaveBlockInfo[i, j]);
     }
 
@@ -288,20 +282,14 @@ public class WaveMap : MonoBehaviour, ISerializationCallbackReceiver
 
                 if (waveBlockInfo.isSet)
                 {
-                    allWaveBlockInfoGameObject[targetV.x, targetV.y].gameObject.SetActive(false);
+                    allMergeWaveBlock[targetV.x, targetV.y].gameObject.SetActive(false);
                 }
                 else
                 {
-                    foreach (Transform o in allWaveBlockInfoGameObject[targetV.x, targetV.y].transform)
+                    allMergeWaveBlock[targetV.x, targetV.y].HideAll();
+                    foreach (var waveBlock in allWaveBlockInfo[targetV.x, targetV.y].waveBlocks)
                     {
-                        if (o.TryGetComponent<WaveBlock>(out var w))
-                        {
-                            o.gameObject.SetActive(false);
-                            if (allWaveBlockInfo[targetV.x, targetV.y].waveBlocks.Any(waveBlock => w.name == waveBlock.name))
-                            {
-                                o.gameObject.SetActive(true);
-                            }
-                        }
+                        allMergeWaveBlock[targetV.x, targetV.y].ShowItem(waveBlock);
                     }
                 }
                 
@@ -310,7 +298,7 @@ public class WaveMap : MonoBehaviour, ISerializationCallbackReceiver
         }
     }
     
-    [Button]
+    [CButton]
     public void Clear()
     {
         var list = new List<GameObject>();

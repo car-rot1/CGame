@@ -55,3 +55,12 @@ v1.0.9：\
 新增了PropertyHandlerExtension类，存放了PropertyHandler部分变量及方法；\
 为ScriptAttributeUtilityExtension新增了GetHandler方法；\
 删除了ShowScriptableObjectAttribute绘制类中多余的代码；
+
+v1.1.0：\
+新增了WFCWindow窗口用于根据邻接关系生成ID；\
+新增了MergeWaveBlock类，用于在波函数生成地图时显示当前可选项；\
+EditorGUIExtension新增了DrawGridForSize方法；\
+暂时关闭了ShowRichText特性的绘制，存在严重Bug；\
+修改了Enum扩展中Contain相关的实现方式；\
+为Rect扩展新增了ToIntType枚举参数，用于指定分割时的取整方式；\
+为SpriteExtension转Texture2D提供了字典缓存；

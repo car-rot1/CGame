@@ -3,6 +3,13 @@ using UnityEngine;
 
 namespace CGame
 {
+    public enum ToIntType
+    {
+        Round,
+        Ceil,
+        Floor,
+    }
+    
     public static class RectExtension
     {
         public static void Deconstruct(this Rect self, out float x, out float y, out float width, out float height)
@@ -48,9 +55,15 @@ namespace CGame
             return result;
         }
         
-        public static Rect[] HorizontalEquallySplitForWidth(this Rect self, float width)
+        public static Rect[] HorizontalEquallySplitForWidth(this Rect self, float width, ToIntType toIntType = ToIntType.Floor)
         {
-            var num = Mathf.FloorToInt(self.width / width);
+            var num = toIntType switch
+            {
+                ToIntType.Round => Mathf.RoundToInt(self.width / width),
+                ToIntType.Ceil => Mathf.CeilToInt(self.width / width),
+                ToIntType.Floor => Mathf.FloorToInt(self.width / width),
+                _ => 0
+            };
             if (num <= 1)
                 return new[] { self };
             
@@ -115,9 +128,15 @@ namespace CGame
             return result;
         }
 
-        public static Rect[] VerticalEquallySplitForHeight(this Rect self, float height)
+        public static Rect[] VerticalEquallySplitForHeight(this Rect self, float height, ToIntType toIntType = ToIntType.Floor)
         {
-            var num = Mathf.FloorToInt(self.height / height);
+            var num = toIntType switch
+            {
+                ToIntType.Round => Mathf.RoundToInt(self.height / height),
+                ToIntType.Ceil => Mathf.CeilToInt(self.height / height),
+                ToIntType.Floor => Mathf.FloorToInt(self.height / height),
+                _ => 0
+            };
             if (num <= 1)
                 return new[] { self };
             
@@ -153,10 +172,22 @@ namespace CGame
             return result;
         }
         
-        public static Rect[,] QuadSplitForSize(this Rect self, float width, float height)
+        public static Rect[,] GridSplitForSize(this Rect self, float width, float height, ToIntType toIntType = ToIntType.Floor)
         {
-            var row = Mathf.FloorToInt(self.height / height);
-            var column = Mathf.FloorToInt(self.width / width);
+            var row = toIntType switch
+            {
+                ToIntType.Round => Mathf.RoundToInt(self.height / height),
+                ToIntType.Ceil => Mathf.CeilToInt(self.height / height),
+                ToIntType.Floor => Mathf.FloorToInt(self.height / height),
+                _ => 0
+            };
+            var column = toIntType switch
+            {
+                ToIntType.Round => Mathf.RoundToInt(self.width / width),
+                ToIntType.Ceil => Mathf.CeilToInt(self.width / width),
+                ToIntType.Floor => Mathf.FloorToInt(self.width / width),
+                _ => 0
+            };
             if (row <= 1 && column <= 1)
                 return new[,] { { self, self } };
             
@@ -175,7 +206,7 @@ namespace CGame
             return result;
         }
         
-        public static Rect[,] QuadSplitForNum(this Rect self, int row, int column)
+        public static Rect[,] GridSplitForNum(this Rect self, int row, int column)
         {
             row = Mathf.Max(row, 1);
             column = Mathf.Max(column, 1);
@@ -199,8 +230,6 @@ namespace CGame
 
             return result;
         }
-        
-        
         
 #region Padding
         

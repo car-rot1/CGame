@@ -14,7 +14,7 @@ namespace CGame
         private static bool CheckFilePath(string path)
         {
             path = Path.ChangeExtension(path, Extension);
-            return !path.GetPathState().ContainsAll(PathState.Invalid, PathState.Directory);
+            return !path.GetPathState().ContainsAll(PathState.Invalid | PathState.Directory);
         }
         
         public static List<T> GetValue<T>(string path, bool ignoreHead = true, char separator = ',', char linefeed = '\n')

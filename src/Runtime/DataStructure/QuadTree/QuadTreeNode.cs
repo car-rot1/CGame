@@ -111,7 +111,7 @@ public abstract class QuadTreeNodeBase<TNode, TPoint> where TNode : QuadTreeNode
     
     private void Split()
     {
-        var childrenRect = Rect.QuadSplitForNum(2, 2);
+        var childrenRect = Rect.GridSplitForNum(2, 2);
 
         ChildrenNode = new TNode[4];
         

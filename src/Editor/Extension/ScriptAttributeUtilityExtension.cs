@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using UnityEditor;
 
-namespace CGame
+namespace CGame.Editor
 {
     public static class ScriptAttributeUtilityExtension
     {

@@ -41,8 +41,6 @@ namespace CGame
         }
     }
     */
-
-    
     
     public abstract class MapGenerateBase
     {

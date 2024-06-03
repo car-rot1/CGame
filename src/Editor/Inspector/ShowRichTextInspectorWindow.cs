@@ -15,8 +15,8 @@ namespace CGame.Editor
 
         static ShowRichTextInspectorWindow()
         {
-            EditorApplication.update += OnUpdate;
-            Selection.selectionChanged += () => _isDraw = false;
+            // EditorApplication.update += OnUpdate;
+            // Selection.selectionChanged += () => _isDraw = false;
         }
         
         private static bool _isDraw;
@@ -62,6 +62,9 @@ namespace CGame.Editor
                     var serializedObject = (SerializedObject)inspectorElement.GetType()
                         .GetProperty("boundObject", BindingFlags.NonPublic | BindingFlags.Instance)
                         !.GetValue(inspectorElement);
+                    
+                    if (serializedObject == null || serializedObject.targetObject == null)
+                        break;
 
                     foreach (var serializedPropertyInfo in SerializedPropertyInfoUtility.Get(serializedObject))
                     {

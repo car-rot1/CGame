@@ -153,15 +153,37 @@ namespace CGame
             return result;
         }
         
-        public static RectInt[] QuadSplit(this RectInt self, int row, int column)
+        public static RectInt[,] GridSplitForSize(this RectInt self, int width, int height)
+        {
+            var row = self.height / height;
+            var column = self.width / width;
+            if (row <= 1 && column <= 1)
+                return new[,] { { self, self } };
+            
+            var result = new RectInt[row, column];
+            
+            var currentPosition = self.position;
+
+            for (var i = 0; i < row; i++)
+            {
+                for (var j = 0; j < column; j++)
+                {
+                    result[i, + j] = new RectInt(currentPosition.x + j * width, currentPosition.y + i * height, width, height);
+                }
+            }
+
+            return result;
+        }
+        
+        public static RectInt[,] GridSplitForNum(this RectInt self, int row, int column)
         {
             row = Mathf.Max(row, 1);
             column = Mathf.Max(column, 1);
 
             if (row == 1 && column == 1)
-                return new[] { self };
+                return new[,] { { self, self } };
             
-            var result = new RectInt[row * column];
+            var result = new RectInt[row, column];
             
             var width = self.width / column;
             var height = self.height / row;
@@ -171,7 +193,7 @@ namespace CGame
             {
                 for (var j = 0; j < column; j++)
                 {
-                    result[i * column + j] = new RectInt(currentPosition.x + j * width, currentPosition.y + i * height, width, height);
+                    result[i, j] = new RectInt(currentPosition.x + j * width, currentPosition.y + i * height, width, height);
                 }
             }
 

@@ -3,7 +3,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace CGame
+namespace CGame.Editor
 {
     [InitializeOnLoad]
     public static class EditorGUIExtension
@@ -74,6 +74,38 @@ namespace CGame
                 DrawSolidRect(new Rect(rect) { x = rect.x + rect.width - right, width = right }, color, usePlaymodeTint);
             if (bottom > 0)
                 DrawSolidRect(new Rect(rect) { y = rect.y + rect.height - bottom, height = bottom }, color, usePlaymodeTint);
+        }
+
+        public static void DrawGridsForSize(Rect rect, float lineWidth, Color color, float width, float height, ToIntType toIntType = ToIntType.Floor, bool usePlaymodeTint = true)
+        {
+            rect.xMax -= lineWidth;
+            rect.yMax -= lineWidth;
+
+            var column = toIntType switch
+            {
+                ToIntType.Round => Mathf.RoundToInt(rect.width / width),
+                ToIntType.Ceil => Mathf.CeilToInt(rect.width / width),
+                ToIntType.Floor => Mathf.FloorToInt(rect.width / width),
+                _ => 0
+            };
+            
+            var row = toIntType switch
+            {
+                ToIntType.Round => Mathf.RoundToInt(rect.height / height),
+                ToIntType.Ceil => Mathf.CeilToInt(rect.height / height),
+                ToIntType.Floor => Mathf.FloorToInt(rect.height / height),
+                _ => 0
+            };
+
+            for (var i = 0; i <= column; i++)
+            {
+                DrawSolidRect(new Rect(rect) { x = rect.xMin + i * width, height = row * height, width = lineWidth }, color, usePlaymodeTint);
+            }
+            
+            for (var i = 0; i <= row; i++)
+            {
+                DrawSolidRect(new Rect(rect) { y = rect.yMin + i * height, height = lineWidth, width = column * width }, color, usePlaymodeTint);
+            }
         }
     }
 }

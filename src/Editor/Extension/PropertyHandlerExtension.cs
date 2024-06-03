@@ -4,7 +4,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace CGame
+namespace CGame.Editor
 {
     public class PropertyHandlerExtension
     {

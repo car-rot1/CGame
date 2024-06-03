@@ -2,7 +2,7 @@
 using System.Reflection;
 using UnityEditor;
 
-namespace CGame
+namespace CGame.Editor
 {
     public static class GenericMenuExtension
     {
