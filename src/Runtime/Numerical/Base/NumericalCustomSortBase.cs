@@ -46,6 +46,7 @@ namespace CGame
         public event Action OnRefreshValue; 
 
         private bool _refresh;
+        
         private Comparison<ModifierBase<T>> _sortComparison;
 
         private List<ModifierBase<T>> _modifiers;
@@ -61,7 +62,7 @@ namespace CGame
             Modifiers.Add(modifier);
             if (sortComparison != null)
                 _sortComparison = sortComparison;
-            _refresh = true;
+            NeedRefresh();
         }
 
         public void RemoveModifier(ModifierBase<T> modifier, Comparison<ModifierBase<T>> sortComparison = null)
@@ -69,10 +70,14 @@ namespace CGame
             Modifiers.Remove(modifier);
             if (sortComparison != null)
                 _sortComparison = sortComparison;
-            _refresh = true;
+            NeedRefresh();
         }
 
-        public void NeedRefresh() => _refresh = true;
+        public void NeedRefresh()
+        {
+            _refresh = true;
+            OnRefreshValue?.Invoke();
+        }
 
 #if ODIN_INSPECTOR
         [Button]
@@ -87,7 +92,6 @@ namespace CGame
             {
                 _finalValue = modifier.ModifierValue(FinalValue);
             }
-            OnRefreshValue?.Invoke();
         }
 
         public void OnBeforeSerialize()

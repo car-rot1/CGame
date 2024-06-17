@@ -18,16 +18,17 @@ namespace CGame.Editor
                 property.serializedObject.ApplyModifiedProperties();
 
             var obj = property.objectReferenceValue;
-            if (obj != null && Attribute.interfaceType.IsInstanceOfType(obj))
-                _isError = false;
-            else
-                _isError = true;
+            if (obj == default || obj.Equals(default))
+                return;
+            
+            _isError = !Attribute.interfaceType.IsInstanceOfType(obj);
 
             if (_isError)
             {
                 var errorRect = position;
-                errorRect.xMin += EditorGUIUtility.labelWidth;
-                errorRect.y += EditorGUIExtension.ControlVerticalSpacing + 18;
+                // errorRect.xMin += EditorGUIUtility.labelWidth + 2;
+                errorRect.y += 18 + EditorGUIExtension.ControlVerticalSpacing;
+                errorRect.height = 18;
                 EditorGUI.HelpBox(errorRect, $"{obj.GetType().Name}类并未实现{Attribute.interfaceType.Name}接口", MessageType.Error);
             }
         }
@@ -36,7 +37,7 @@ namespace CGame.Editor
         {
             var height = base.GetPropertyHeight(property, label);
             if (_isError)
-                height += EditorGUIExtension.ControlVerticalSpacing + 18;;
+                height += EditorGUIExtension.ControlVerticalSpacing + 18;
             return height;
         }
     }

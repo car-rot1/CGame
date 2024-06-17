@@ -35,7 +35,7 @@ namespace CGame.Editor
     
         private void Update()
         {
-            if (EditorWindow.mouseOverWindow == null || EditorWindow.mouseOverWindow.titleContent.text != "Inspector")
+            if (EditorWindow.mouseOverWindow == null || EditorWindow.mouseOverWindow.titleContent?.text != "Inspector")
             {
                 _logError = false;
                 return;

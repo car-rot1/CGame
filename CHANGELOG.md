@@ -64,3 +64,9 @@ EditorGUIExtension新增了DrawGridForSize方法；\
 修改了Enum扩展中Contain相关的实现方式；\
 为Rect扩展新增了ToIntType枚举参数，用于指定分割时的取整方式；\
 为SpriteExtension转Texture2D提供了字典缓存；
+
+v1.1.1：\
+新增了PriorityQueue；\
+优化了NumericalFixedBase和NumericalCustomSortBase发送OnRefreshValue事件的时机；\
+修复了RequiredInterfaceMonoAttributeDrawer显示空物体时的报错bug；\
+修复了单例拖拽时的窗口title为空的报错bug；

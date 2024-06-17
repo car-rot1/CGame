@@ -61,40 +61,44 @@ namespace CGame
         public void AddModifier(AddModifierBase<T> modifier)
         {
             AddModifiers.Add(modifier);
-            _refresh = true;
+            NeedRefresh();
         }
         
         public void AddModifier(MultiModifierBase<T> modifier)
         {
             MultiModifiers.Add(modifier);
-            _refresh = true;
+            NeedRefresh();
         }
         
         public void AddModifier(CoverModifierBase<T> modifier)
         {
             CoverModifiers.Add(modifier);
-            _refresh = true;
+            NeedRefresh();
         }
 
         public void RemoveModifier(AddModifierBase<T> modifier)
         {
             AddModifiers.Remove(modifier);
-            _refresh = true;
+            NeedRefresh();
         }
         
         public void RemoveModifier(MultiModifierBase<T> modifier)
         {
             MultiModifiers.Remove(modifier);
-            _refresh = true;
+            NeedRefresh();
         }
         
         public void RemoveModifier(CoverModifierBase<T> modifier)
         {
             CoverModifiers.Remove(modifier);
-            _refresh = true;
+            NeedRefresh();
         }
         
-        public void NeedRefresh() => _refresh = true;
+        public void NeedRefresh()
+        {
+            _refresh = true;
+            OnRefreshValue?.Invoke();
+        }
 
 #if ODIN_INSPECTOR
         [Button]
@@ -105,7 +109,6 @@ namespace CGame
             if (CoverModifiers.Count > 0)
             {
                 finalValue = CoverModifiers[^1].ModifierValue(finalValue);
-                OnRefreshValue?.Invoke();
                 return;
             }
             
@@ -118,7 +121,6 @@ namespace CGame
             {
                 finalValue = multiModifier.ModifierValue(finalValue);
             }
-            OnRefreshValue?.Invoke();
         }
 
         public void OnBeforeSerialize()
