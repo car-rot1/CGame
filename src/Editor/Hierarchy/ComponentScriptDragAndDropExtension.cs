@@ -48,6 +48,12 @@ namespace CGame.Editor
                     Undo.RegisterCreatedObjectUndo(go, go.name);
                     Undo.AddComponent(go, componentScript.GetClass());
                     Selection.activeGameObject = go;
+
+                    EditorApplication.delayCall += () =>
+                    {
+                        var sceneHierarchyWindowType = typeof(UnityEditor.Editor).Assembly.GetType("UnityEditor.SceneHierarchyWindow");
+                        EditorWindow.GetWindow(sceneHierarchyWindowType).SendEvent(EditorGUIUtility.CommandEvent("Rename"));
+                    };
                 }
             }
 

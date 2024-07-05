@@ -96,6 +96,9 @@ namespace CGame.Editor
                         .GetProperty("boundObject", BindingFlags.NonPublic | BindingFlags.Instance)
                         !.GetValue(inspectorElement);
                     
+                    if (serializedObject == null || serializedObject.targetObject == null)
+                        continue;
+                    
                     var myElement = new VisualElement
                     {
                         name = "CButtonElement",

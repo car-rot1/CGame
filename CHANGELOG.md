@@ -70,3 +70,7 @@ v1.1.1：\
 优化了NumericalFixedBase和NumericalCustomSortBase发送OnRefreshValue事件的时机；\
 修复了RequiredInterfaceMonoAttributeDrawer显示空物体时的报错bug；\
 修复了单例拖拽时的窗口title为空的报错bug；
+
+v1.1.2：\
+优化了直接拖拽组件至Hierarchy窗口的功能，拖拽后会自动执行重命名命令；\
+修复了CButton多选游戏物体删除时报空的bug；
