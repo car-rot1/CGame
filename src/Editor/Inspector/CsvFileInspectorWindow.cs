@@ -56,7 +56,7 @@ namespace CGame.Editor
 
             var csvContent = File.ReadAllText(localTextFilePath, Encoding.UTF8);
 
-            CsvUtility.CsvContentToDataNonAlloc(csvContent, _rowInfos, LocalizationConfig.Instance.CsvFileInfo.separator, LocalizationConfig.Instance.CsvFileInfo.linefeed);
+            CsvUtility.CsvContentToDataNonAlloc(csvContent, _rowInfos);
             
             if (_currentInspectorWindow != null)
             {

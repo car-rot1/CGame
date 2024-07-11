@@ -69,8 +69,8 @@ namespace CGame.Localization
         {
             if (SpriteInfoDic.TryGetValue(localizationSystem.Language, out var customSprite) && customSprite != null)
                 return customSprite;
-
-            var localSprite = localizationSystem.GetSprite(Id);
+            
+            var localSprite = (Sprite)localizationSystem.GetAsset(nameof(LocalizationSpriteLoader), Id);
             return localSprite != null ? localSprite : sprite;
         }
     }

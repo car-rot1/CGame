@@ -138,15 +138,15 @@ namespace CGame.Localization
         private string TextToLocal(string content)
         {
             if (!TargetText.richText)
-                return TextInfoDic.TryGetValue(localizationSystem.Language, out var customText) ? customText : localizationSystem.GetText(Id);
+                return TextInfoDic.TryGetValue(localizationSystem.Language, out var customText) ? customText : localizationSystem.GetString(Id);
             
             if (_allLocalText.Count <= 0)
-                return localizationSystem.GetText(content);
+                return localizationSystem.GetString(content);
                 
             foreach (var currentId in _allLocalText.Keys)
             {
                 foreach (var s in _allLocalText[currentId])
-                    content = content.Replace(s, localizationSystem.GetText(currentId));
+                    content = content.Replace(s, localizationSystem.GetString(currentId));
             }
             return content;
         }

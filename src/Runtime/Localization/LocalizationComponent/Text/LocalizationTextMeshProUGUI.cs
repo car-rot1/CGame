@@ -163,15 +163,15 @@ namespace CGame.Localization
         private string TextToLocal(string content)
         {
             if (!richText)
-                return TextInfoDic.TryGetValue(Local.Language, out var customText) ? customText : Local.GetText(Id);
+                return TextInfoDic.TryGetValue(Local.Language, out var customText) ? customText : Local.GetString(Id);
             
             if (_allLocalText.Count <= 0)
-                return Local.GetText(content);
+                return Local.GetString(content);
                 
             foreach (var currentId in _allLocalText.Keys)
             {
                 foreach (var s in _allLocalText[currentId])
-                    content = content.Replace(s, Local.GetText(currentId));
+                    content = content.Replace(s, Local.GetString(currentId));
             }
             return content;
         }

@@ -218,11 +218,11 @@ namespace CGame.Localization.Editor
 
         private void ImportCsvFile()
         {
-            var path = EditorUtility.OpenFilePanel(nameof(ImportCsvFile), Application.dataPath, _config.CsvFileInfo.fileExtension[1..]);
+            var path = EditorUtility.OpenFilePanel(nameof(ImportCsvFile), Application.dataPath, _config.localizationStringLoader.CsvFileInfo.fileExtension[1..]);
             if (string.IsNullOrWhiteSpace(path))
                 return;
             
-            foreach (var languageTextInfo in CsvFileController.GetValue<LanguageTextInfo>(path, _config.CsvFileInfo.ignoreHead, _config.CsvFileInfo.separator, _config.CsvFileInfo.linefeed))
+            foreach (var languageTextInfo in CsvFileController.GetValue<LanguageTextInfo>(path, _config.localizationStringLoader.CsvFileInfo.ignoreHead, _config.localizationStringLoader.CsvFileInfo.separator, _config.localizationStringLoader.CsvFileInfo.linefeed))
             {
                 Target.languageTextInfos.Add(languageTextInfo);
                 _selects.Add(false);
@@ -231,7 +231,7 @@ namespace CGame.Localization.Editor
         
         private void ImportExcelFile()
         {
-            var path = EditorUtility.OpenFilePanel(nameof(ImportCsvFile), Application.dataPath, _config.ExcelFileInfo.fileExtension[1..]);
+            var path = EditorUtility.OpenFilePanel(nameof(ImportCsvFile), Application.dataPath, _config.localizationStringLoader.ExcelFileInfo.fileExtension[1..]);
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
@@ -245,7 +245,7 @@ namespace CGame.Localization.Editor
         
         private void ImportJsonFile()
         {
-            var path = EditorUtility.OpenFilePanel(nameof(ImportCsvFile), Application.dataPath, _config.JsonFileInfo.fileExtension[1..]);
+            var path = EditorUtility.OpenFilePanel(nameof(ImportCsvFile), Application.dataPath, _config.localizationStringLoader.JsonFileInfo.fileExtension[1..]);
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
@@ -258,16 +258,16 @@ namespace CGame.Localization.Editor
         
         private void ExportCsvFile()
         {
-            var path = EditorUtility.SaveFilePanel(nameof(ExportCsvFile), Application.dataPath, _target.name, _config.CsvFileInfo.fileExtension[1..]);
+            var path = EditorUtility.SaveFilePanel(nameof(ExportCsvFile), Application.dataPath, _target.name, _config.localizationStringLoader.CsvFileInfo.fileExtension[1..]);
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
-            CsvFileController.SetValue(path, _target.languageTextInfos, _config.CsvFileInfo.ignoreHead, _config.CsvFileInfo.separator, _config.CsvFileInfo.linefeed);
+            CsvFileController.SetValue(path, _target.languageTextInfos, _config.localizationStringLoader.CsvFileInfo.ignoreHead, _config.localizationStringLoader.CsvFileInfo.separator, _config.localizationStringLoader.CsvFileInfo.linefeed);
         }
         
         private void ExportExcelFile()
         {
-            var path = EditorUtility.SaveFilePanel(nameof(ExportCsvFile), Application.dataPath, _target.name, _config.ExcelFileInfo.fileExtension[1..]);
+            var path = EditorUtility.SaveFilePanel(nameof(ExportCsvFile), Application.dataPath, _target.name, _config.localizationStringLoader.ExcelFileInfo.fileExtension[1..]);
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
@@ -283,7 +283,7 @@ namespace CGame.Localization.Editor
         
         private void ExportJsonFile()
         {
-            var path = EditorUtility.SaveFilePanel(nameof(ExportCsvFile), Application.dataPath, _target.name, _config.JsonFileInfo.fileExtension[1..]);
+            var path = EditorUtility.SaveFilePanel(nameof(ExportCsvFile), Application.dataPath, _target.name, _config.localizationStringLoader.JsonFileInfo.fileExtension[1..]);
             if (string.IsNullOrWhiteSpace(path))
                 return;
             

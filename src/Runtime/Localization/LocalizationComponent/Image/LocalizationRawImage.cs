@@ -69,8 +69,11 @@ namespace CGame.Localization
         {
             if (TextureInfoDic.TryGetValue(Local.Language, out var customTexture) && customTexture != null)
                 return customTexture;
-            
-            var localTexture = Local.GetTexture(Id);
+
+            var sprite = (Sprite)Local.GetAsset(nameof(LocalizationSpriteLoader), Id);
+            if (sprite == null)
+                return null;
+            var localTexture = sprite.GetPartTexture();
             return localTexture != null ? localTexture : texture;
         }
 

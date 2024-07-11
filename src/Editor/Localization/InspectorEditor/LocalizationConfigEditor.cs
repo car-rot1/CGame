@@ -1,5 +1,4 @@
-using System.IO;
-using System.Linq;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,54 +7,44 @@ namespace CGame.Localization.Editor
     [CustomEditor(typeof(LocalizationConfig))]
     public class LocalizationConfigEditor : UnityEditor.Editor
     {
-        private string[] _allLanguage;
         private int _defaultLanguageIndex;
+        private List<string> _allLanguages;
         
         private LocalizationConfig _target;
 
+        private SerializedProperty _languages;
         private SerializedProperty _defaultLanguage;
-        private SerializedProperty _internalLoadType;
-        private SerializedProperty _languageTextFolderInternalPath;
-        private SerializedProperty _languageImageFolderInternalPath;
-        private SerializedProperty _languageTextFolderExternalPath;
-        private SerializedProperty _languageImageFolderExternalPath;
-        private SerializedProperty _csvFileInfo;
-        private SerializedProperty _excelFileInfo;
-        private SerializedProperty _jsonFileInfo;
+        private SerializedProperty _localizationStringLoader;
+        private SerializedProperty _localizationAssetLoaders;
 
         private void OnEnable()
         {
             _target = (LocalizationConfig)target;
-            
-            _allLanguage = GetAllLanguage();
-            
+            _languages = serializedObject.FindProperty("languages");
             _defaultLanguage = serializedObject.FindProperty("defaultLanguage");
-            _internalLoadType = serializedObject.FindProperty("internalLoadType");
-            _languageTextFolderInternalPath = serializedObject.FindProperty("languageTextFolderInternalPath");
-            _languageImageFolderInternalPath = serializedObject.FindProperty("languageImageFolderInternalPath");
-            _languageTextFolderExternalPath = serializedObject.FindProperty("languageTextFolderExternalPath");
-            _languageImageFolderExternalPath = serializedObject.FindProperty("languageImageFolderExternalPath");
-            _csvFileInfo = serializedObject.FindProperty("csvFileInfo");
-            _excelFileInfo = serializedObject.FindProperty("excelFileInfo");
-            _jsonFileInfo = serializedObject.FindProperty("jsonFileInfo");
+            _localizationStringLoader = serializedObject.FindProperty("localizationStringLoader");
+            _localizationAssetLoaders = serializedObject.FindProperty("localizationAssetLoaders");
             
             int i;
-            for (i = 0; i < _allLanguage.Length; i++)
+            var languagesSize = _languages.arraySize;
+            for (i = 0; i < languagesSize; i++)
             {
-                var language = _allLanguage[i];
+                var language = _languages.GetArrayElementAtIndex(i).stringValue;
                 if (language.Equals(_defaultLanguage.stringValue))
                 {
                     _defaultLanguageIndex = i;
                     break;
                 }
             }
-            if (i >= _allLanguage.Length)
+            if (i >= _languages.arraySize)
             {
                 _defaultLanguageIndex = 0;
-                _defaultLanguage.stringValue = _allLanguage.Length > 0 ? _allLanguage[0] : "";
+                _defaultLanguage.stringValue = languagesSize > 0 ? _languages.GetArrayElementAtIndex(0).stringValue : "";
             }
-        }
 
+            _allLanguages = new List<string>();
+        }
+        
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -64,38 +53,23 @@ namespace CGame.Localization.Editor
             EditorGUILayout.ObjectField("Script", MonoScript.FromScriptableObject(target as ScriptableObject), typeof(ScriptableObject), false);
             EditorGUI.EndDisabledGroup();
             
-            EditorGUI.BeginChangeCheck();
-            _defaultLanguageIndex = EditorGUILayout.Popup(_defaultLanguage.displayName, _defaultLanguageIndex, _allLanguage);
-            if (EditorGUI.EndChangeCheck())
-                _defaultLanguage.stringValue = _allLanguage[_defaultLanguageIndex];
+            EditorGUILayout.PropertyField(_languages);
             
-            EditorGUILayout.PropertyField(_internalLoadType);
-            EditorGUILayout.PropertyField(_languageTextFolderInternalPath);
-            EditorGUILayout.PropertyField(_languageImageFolderInternalPath);
-            EditorGUILayout.PropertyField(_languageTextFolderExternalPath);
-            EditorGUILayout.PropertyField(_languageImageFolderExternalPath);
-            EditorGUILayout.PropertyField(_csvFileInfo);
-            EditorGUILayout.PropertyField(_excelFileInfo);
-            EditorGUILayout.PropertyField(_jsonFileInfo);
+            _allLanguages.Clear();
+            for (var i = 0; i < _languages.arraySize; i++)
+            {
+                _allLanguages.Add(_languages.GetArrayElementAtIndex(i).stringValue);
+            }
+            
+            EditorGUI.BeginChangeCheck();
+            _defaultLanguageIndex = EditorGUILayout.Popup(_defaultLanguage.displayName, _defaultLanguageIndex, _allLanguages.ToArray());
+            if (EditorGUI.EndChangeCheck())
+                _defaultLanguage.stringValue = _allLanguages[_defaultLanguageIndex];
+            
+            EditorGUILayout.PropertyField(_localizationStringLoader);
+            EditorGUILayout.PropertyField(_localizationAssetLoaders);
 
             serializedObject.ApplyModifiedProperties();
-        }
-
-        private string[] GetAllLanguage()
-        {
-            switch (_target.InternalLoadType)
-            {
-                case InternalLoadType.Resource:
-                    return Resources.LoadAll<LanguageTextSO>(_target.LanguageTextFolderInternalPath)
-                        .Select(languageTextSo => Path.GetFileNameWithoutExtension(languageTextSo.name))
-                        .ToArray();
-                case InternalLoadType.Addressable:
-                    return new string[] { };
-                case InternalLoadType.Yooasset:
-                    return new string[] { };
-                default:
-                    return new string[] { };
-            }
         }
     }
 }
