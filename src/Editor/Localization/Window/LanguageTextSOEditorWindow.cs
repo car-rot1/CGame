@@ -7,8 +7,8 @@ namespace CGame.Localization.Editor
 {
     public class LanguageTextSOEditorWindow : EditorWindow
     {
-        private LanguageTextSO _target;
-        private LanguageTextSO Target
+        private LanguageStringSO _target;
+        private LanguageStringSO Target
         {
             get => _target;
             set
@@ -28,7 +28,7 @@ namespace CGame.Localization.Editor
 
         private LocalizationConfig _config;
 
-        public static void Open(LanguageTextSO target = null)
+        public static void Open(LanguageStringSO target = null)
         {
             var window = GetWindow<LanguageTextSOEditorWindow>();
 
@@ -81,7 +81,7 @@ namespace CGame.Localization.Editor
                 RemoveButtonHeight);
 
             var rects = verticalRects[0].HorizontalSplit(-1, 10, ImportButtonWidth, 10, ExportButtonWidth);
-            var obj = (LanguageTextSO)EditorGUI.ObjectField(rects[0], Target, typeof(LanguageTextSO), true);
+            var obj = (LanguageStringSO)EditorGUI.ObjectField(rects[0], Target, typeof(LanguageStringSO), true);
             if (obj != null)
                 Target = obj;
             if (GUI.Button(rects[2], "Import"))

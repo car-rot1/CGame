@@ -8,8 +8,8 @@ namespace CGame.Localization.Editor
 {
     public class LanguageImageSOEditorWindow : EditorWindow
     {
-        private LanguageImageSO _target;
-        private LanguageImageSO Target
+        private LanguageSpriteSO _target;
+        private LanguageSpriteSO Target
         {
             get => _target;
             set
@@ -27,7 +27,7 @@ namespace CGame.Localization.Editor
         
         [SerializeField] private List<bool> _selects = new();
 
-        public static void Open(LanguageImageSO target = null)
+        public static void Open(LanguageSpriteSO target = null)
         {
             var window = GetWindow<LanguageImageSOEditorWindow>();
 
@@ -79,7 +79,7 @@ namespace CGame.Localization.Editor
                 RemoveButtonHeight);
             
             var rects = verticalRects[0].HorizontalSplit(-1, 10, ImportButtonWidth, 10, ExportButtonWidth);
-            var obj = (LanguageImageSO)EditorGUI.ObjectField(rects[0], Target, typeof(LanguageImageSO), true);
+            var obj = (LanguageSpriteSO)EditorGUI.ObjectField(rects[0], Target, typeof(LanguageSpriteSO), true);
             if (obj != null)
                 Target = obj;
             if (GUI.Button(rects[2], "Import"))

@@ -49,16 +49,6 @@ namespace CGame.Localization.Editor
                     textInfo.id = localizationTextMeshProUGUI.Id;
                     textInfo.value = localizationTextMeshProUGUI.text;
                 }
-                else if (text.TryGetComponent<LocalizationTextComponent>(out var localizationTextComponent))
-                {
-                    textInfo.id = localizationTextComponent.Id;
-                    textInfo.value = localizationTextComponent.TargetText.text;
-                }
-                else if (text.TryGetComponent<LocalizationTMPTextComponent>(out var localizationTMPTextComponent))
-                {
-                    textInfo.id = localizationTMPTextComponent.Id;
-                    textInfo.value = localizationTMPTextComponent.TargetText.text;
-                }
                 else
                 {
                     textInfo.id = textInfo.value = text switch
@@ -230,7 +220,7 @@ namespace CGame.Localization.Editor
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
-            var so = CreateInstance<LanguageTextSO>();
+            var so = CreateInstance<LanguageStringSO>();
             foreach (var textInfo in TextInfos.Values.Where(imageInfo => imageInfo.isSelect))
             {
                 so.languageTextInfos.Add(new LanguageTextInfo { id = textInfo.id, text = textInfo.value });

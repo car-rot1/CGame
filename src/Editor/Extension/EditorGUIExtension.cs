@@ -14,7 +14,7 @@ namespace CGame.Editor
         public static readonly float VerticalSpacingMultiField;
         public static readonly float IndentPerLevel;
         
-        private static readonly MethodInfo setExpandedRecurseMethodInfo;
+        private static readonly MethodInfo _setExpandedRecurseMethodInfo;
         
         static EditorGUIExtension()
         {
@@ -35,12 +35,12 @@ namespace CGame.Editor
 
             IndentPerLevel = (float)EditorGUIType.GetField("kIndentPerLevel", BindingFlags.Static | BindingFlags.NonPublic)!.GetValue(null);
 
-            setExpandedRecurseMethodInfo = EditorGUIType.GetMethod("SetExpandedRecurse", BindingFlags.NonPublic | BindingFlags.Static)!;
+            _setExpandedRecurseMethodInfo = EditorGUIType.GetMethod("SetExpandedRecurse", BindingFlags.NonPublic | BindingFlags.Static)!;
         }
         
         public static void SetExpandedRecurse(SerializedProperty property, bool expanded)
         {
-            setExpandedRecurseMethodInfo.Invoke(null, new object[] { property, expanded });
+            _setExpandedRecurseMethodInfo.Invoke(null, new object[] { property, expanded });
         }
         
         public static void DrawSolidRect(Rect rect, Color color, bool usePlaymodeTint = true)

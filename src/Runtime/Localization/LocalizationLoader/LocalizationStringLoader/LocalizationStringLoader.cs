@@ -103,7 +103,7 @@ namespace CGame.Localization
                 case InternalLoadType.Resource:
                 {
                     var path = InternalPath + '/' + language;
-                    var textSO = Resources.Load<LanguageTextSO>(path);
+                    var textSO = Resources.Load<LanguageStringSO>(path);
                     if (textSO == null)
                         break;
                     foreach (var languageTextInfo in textSO.languageTextInfos)

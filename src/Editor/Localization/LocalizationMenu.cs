@@ -25,13 +25,13 @@ namespace CGame.Localization.Editor
         [OnOpenAsset(1)]
         public static bool OnOpenAsset(int instanceID, int line)
         {
-            if (EditorUtility.InstanceIDToObject(instanceID) is LanguageTextSO languageTextSo)
+            if (EditorUtility.InstanceIDToObject(instanceID) is LanguageStringSO languageTextSo)
             {
                 LanguageTextSOEditorWindow.Open(languageTextSo);
                 return true;
             }
             
-            if (EditorUtility.InstanceIDToObject(instanceID) is LanguageImageSO languageImageSo)
+            if (EditorUtility.InstanceIDToObject(instanceID) is LanguageSpriteSO languageImageSo)
             {
                 LanguageImageSOEditorWindow.Open(languageImageSo);
                 return true;
@@ -40,7 +40,7 @@ namespace CGame.Localization.Editor
             return false;
         }
 
-        [MenuItem("Assets/Create/Localization/" + nameof(LanguageTextSO), priority = 0)]
+        [MenuItem("Assets/Create/Localization/" + nameof(LanguageStringSO), priority = 0)]
         public static void CreateLanguageTextSO()
         {
             var targets = Selection.objects;
@@ -59,19 +59,19 @@ namespace CGame.Localization.Editor
 
         private static void CreateLanguageTextSOFromSelectObject(Object target)
         {
-            var languageTextSo = ScriptableObject.CreateInstance<LanguageTextSO>();
+            var languageTextSo = ScriptableObject.CreateInstance<LanguageStringSO>();
             string newAssetFilePathWithName;
             
             if (target == null)
             {
-                newAssetFilePathWithName = AssetDatabase.GenerateUniqueAssetPath("Assets/" + nameof(LanguageTextSO) + ".asset");
+                newAssetFilePathWithName = AssetDatabase.GenerateUniqueAssetPath("Assets/" + nameof(LanguageStringSO) + ".asset");
             }
             else
             {
                 var path = AssetDatabase.GetAssetPath(target);
                 
                 if (path.GetPathState().ContainsAll(PathState.Directory | PathState.Exist))
-                    newAssetFilePathWithName = AssetDatabase.GenerateUniqueAssetPath(path + '/' + nameof(LanguageTextSO) + ".asset");
+                    newAssetFilePathWithName = AssetDatabase.GenerateUniqueAssetPath(path + '/' + nameof(LanguageStringSO) + ".asset");
                 else
                 {
                     if (_config.localizationStringLoader.IsCsvFile(path))
@@ -93,7 +93,7 @@ namespace CGame.Localization.Editor
                     }
                     else
                     {
-                        newAssetFilePathWithName = AssetDatabase.GenerateUniqueAssetPath(Path.GetDirectoryName(path) + '/' + nameof(LanguageTextSO) + ".asset");
+                        newAssetFilePathWithName = AssetDatabase.GenerateUniqueAssetPath(Path.GetDirectoryName(path) + '/' + nameof(LanguageStringSO) + ".asset");
                     }
                 }
             }
@@ -104,78 +104,79 @@ namespace CGame.Localization.Editor
             AssetDatabase.Refresh();
         }
         
-        // [MenuItem("Assets/Create/Localization/" + nameof(LanguageImageSO), priority = 1)]
-        // public static void CreateLanguageImageSO()
-        // {
-        //     CreateLanguageImageSOFromSelectObject(Selection.objects);
-        // }
+        [MenuItem("Assets/Create/Localization/" + nameof(LanguageSpriteSO), priority = 1)]
+        public static void CreateLanguageImageSO()
+        {
+            CreateLanguageImageSOFromSelectObject(Selection.objects);
+        }
 
-        // private static void CreateLanguageImageSOFromSelectObject(Object[] targets)
-        // {
-        //     var languageImageSos = new List<LanguageImageSO>();
-        //     var newAssetFilePathWithNames = new List<string>();
-        //     
-        //     if (targets is not { Length: > 0 })
-        //     {
-        //         languageImageSos.Add(ScriptableObject.CreateInstance<LanguageImageSO>());
-        //         newAssetFilePathWithNames.Add(AssetDatabase.GenerateUniqueAssetPath("Assets/" + nameof(LanguageImageSO) + ".asset"));
-        //     }
-        //     else
-        //     {
-        //         var foldTargets = targets
-        //             .Where(target => AssetDatabase.GetAssetPath(target).GetPathState().ContainsAll(PathState.Directory | PathState.Exist))
-        //             .ToList();
-        //
-        //         if (foldTargets.Count <= 0)
-        //         {
-        //             var path = AssetDatabase.GetAssetPath(targets[0]);
-        //             path = Path.GetDirectoryName(path);
-        //             languageImageSos.Add(ScriptableObject.CreateInstance<LanguageImageSO>());
-        //             newAssetFilePathWithNames.Add(AssetDatabase.GenerateUniqueAssetPath(path + '/' + nameof(LanguageImageSO) + ".asset"));
-        //         }
-        //         else
-        //         {
-        //             foreach (var foldTarget in foldTargets)
-        //             {
-        //                 var path = AssetDatabase.GetAssetPath(foldTarget);
-        //                 languageImageSos.Add(ScriptableObject.CreateInstance<LanguageImageSO>());
-        //                 newAssetFilePathWithNames.Add(AssetDatabase.GenerateUniqueAssetPath(path + '/' + nameof(LanguageImageSO) + ".asset"));
-        //             }
-        //         }
-        //         
-        //         foreach (var target in targets)
-        //         {
-        //             if (!_config.IsImageFile(AssetDatabase.GetAssetPath(target)))
-        //                 continue;
-        //
-        //             var path = AssetDatabase.GetAssetPath(target);
-        //             switch (target)
-        //             {
-        //                 case Texture2D:
-        //                 {
-        //                     foreach (var languageImageSo in languageImageSos)
-        //                         languageImageSo.languageImageInfos.Add(new LanguageImageInfo { id = _config.GetImageFileNameWithoutExtension(path), sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path)});
-        //                     break;
-        //                 }
-        //                 case Sprite sprite:
-        //                 {
-        //                     foreach (var languageImageSo in languageImageSos)
-        //                         languageImageSo.languageImageInfos.Add(new LanguageImageInfo { id = _config.GetImageFileNameWithoutExtension(path), sprite = sprite });
-        //                     break;
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     
-        //     Selection.activeObject = languageImageSos[0];
-        //     
-        //     for (var i = 0; i < newAssetFilePathWithNames.Count; i++)
-        //     {
-        //         AssetDatabase.CreateAsset(languageImageSos[i], newAssetFilePathWithNames[i]);
-        //     }
-        //     AssetDatabase.SaveAssets();
-        //     AssetDatabase.Refresh();
-        // }
+        private static void CreateLanguageImageSOFromSelectObject(Object[] targets)
+        {
+            var languageImageSos = new List<LanguageSpriteSO>();
+            var newAssetFilePathWithNames = new List<string>();
+            
+            if (targets is not { Length: > 0 })
+            {
+                languageImageSos.Add(ScriptableObject.CreateInstance<LanguageSpriteSO>());
+                newAssetFilePathWithNames.Add(AssetDatabase.GenerateUniqueAssetPath("Assets/" + nameof(LanguageSpriteSO) + ".asset"));
+            }
+            else
+            {
+                var foldTargets = targets
+                    .Where(target => AssetDatabase.GetAssetPath(target).GetPathState().ContainsAll(PathState.Directory | PathState.Exist))
+                    .ToList();
+        
+                if (foldTargets.Count <= 0)
+                {
+                    var path = AssetDatabase.GetAssetPath(targets[0]);
+                    path = Path.GetDirectoryName(path);
+                    languageImageSos.Add(ScriptableObject.CreateInstance<LanguageSpriteSO>());
+                    newAssetFilePathWithNames.Add(AssetDatabase.GenerateUniqueAssetPath(path + '/' + nameof(LanguageSpriteSO) + ".asset"));
+                }
+                else
+                {
+                    foreach (var foldTarget in foldTargets)
+                    {
+                        var path = AssetDatabase.GetAssetPath(foldTarget);
+                        languageImageSos.Add(ScriptableObject.CreateInstance<LanguageSpriteSO>());
+                        newAssetFilePathWithNames.Add(AssetDatabase.GenerateUniqueAssetPath(path + '/' + nameof(LanguageSpriteSO) + ".asset"));
+                    }
+                }
+
+                var spriteLoader = (LocalizationSpriteLoader)_config.localizationAssetLoaders.Find(loader => loader.Key == nameof(LocalizationSpriteLoader));
+                foreach (var target in targets)
+                {
+                    if (!spriteLoader.IsImageFile(AssetDatabase.GetAssetPath(target)))
+                        continue;
+        
+                    var path = AssetDatabase.GetAssetPath(target);
+                    switch (target)
+                    {
+                        case Texture2D:
+                        {
+                            foreach (var languageImageSo in languageImageSos)
+                                languageImageSo.languageImageInfos.Add(new LanguageImageInfo { id = spriteLoader.GetImageFileNameWithoutExtension(path), sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path)});
+                            break;
+                        }
+                        case Sprite sprite:
+                        {
+                            foreach (var languageImageSo in languageImageSos)
+                                languageImageSo.languageImageInfos.Add(new LanguageImageInfo { id = spriteLoader.GetImageFileNameWithoutExtension(path), sprite = sprite });
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            Selection.activeObject = languageImageSos[0];
+            
+            for (var i = 0; i < newAssetFilePathWithNames.Count; i++)
+            {
+                AssetDatabase.CreateAsset(languageImageSos[i], newAssetFilePathWithNames[i]);
+            }
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
         
         [MenuItem("Localization/Text/Generate LanguageTextSO", false, 0)]
         public static void GenerateLanguageTextSO()

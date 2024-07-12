@@ -9,6 +9,13 @@ namespace CGame.Localization
     {
         public override string Key => nameof(LocalizationSpriteLoader);
 
+        public LocalizationSpriteLoader()
+        {
+            InternalPath = "Language/Sprite";
+            InternalLoadType = InternalLoadType.Resource;
+            ExternalPath = "../Language/Image";
+        }
+
         protected override bool RefreshExternalResource(LocalizationSystem localizationSystem, string language)
         {
             var folderPath = ExternalPath + '/' + language;
@@ -35,7 +42,7 @@ namespace CGame.Localization
                 case InternalLoadType.Resource:
                 {
                     var path = InternalPath + '/' + language;
-                    var imageSo = Resources.Load<LanguageImageSO>(path);
+                    var imageSo = Resources.Load<LanguageSpriteSO>(path);
                     if (imageSo == null)
                         break;
                     foreach (var languageImageInfo in imageSo.languageImageInfos)

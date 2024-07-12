@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,7 +18,7 @@ namespace CGame.Localization.Editor
         private SerializedProperty _defaultLanguage;
         private SerializedProperty _localizationStringLoader;
         private SerializedProperty _localizationAssetLoaders;
-
+        
         private void OnEnable()
         {
             _target = (LocalizationConfig)target;
@@ -68,6 +70,30 @@ namespace CGame.Localization.Editor
             
             EditorGUILayout.PropertyField(_localizationStringLoader);
             EditorGUILayout.PropertyField(_localizationAssetLoaders);
+            if (GUILayout.Button("AddLoader"))
+            {
+                var menu = new GenericMenu();
+                foreach (var type in TypeCache.GetTypesDerivedFrom<LocalizationAssetLoaderBase>().Where(type => !type.IsAbstract))
+                {
+                    int i;
+                    for (i = 0; i < _localizationAssetLoaders.arraySize; i++)
+                    {
+                        if (_localizationAssetLoaders.GetArrayElementAtIndex(i).boxedValue.GetType() == type)
+                            break;
+                    }
+                    if (i < _localizationAssetLoaders.arraySize)
+                        continue;
+                    menu.AddItem(new GUIContent(type.Name), false, () =>
+                    {
+                        var loader = Activator.CreateInstance(type);
+                        var length = _localizationAssetLoaders.arraySize;
+                        _localizationAssetLoaders.InsertArrayElementAtIndex(length);
+                        _localizationAssetLoaders.GetArrayElementAtIndex(length).boxedValue = loader;
+                        _localizationAssetLoaders.serializedObject.ApplyModifiedProperties();
+                    });
+                }
+                menu.ShowAsContext();
+            }
 
             serializedObject.ApplyModifiedProperties();
         }

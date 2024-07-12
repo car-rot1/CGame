@@ -11,7 +11,7 @@ namespace CGame.Localization
         public Sprite sprite;
     }
     
-    public class LanguageImageSO : ScriptableObject
+    public class LanguageSpriteSO : ScriptableObject
     {
         public List<LanguageImageInfo> languageImageInfos = new();
     }

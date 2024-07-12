@@ -46,16 +46,6 @@ namespace CGame.Localization.Editor
                     imageInfo.id = localizationRawImage.Id;
                     imageInfo.value = AssetDatabase.LoadAssetAtPath<Sprite>(AssetDatabase.GetAssetPath(localizationRawImage.texture));
                 }
-                else if (image.TryGetComponent<LocalizationImageComponent>(out var localizationImageComponent))
-                {
-                    imageInfo.id = localizationImageComponent.Id;
-                    imageInfo.value = localizationImageComponent.TargetImage.sprite;
-                }
-                else if (image.TryGetComponent<LocalizationRawImageComponent>(out var localizationRawImageComponent))
-                {
-                    imageInfo.id = localizationRawImageComponent.Id;
-                    imageInfo.value = AssetDatabase.LoadAssetAtPath<Sprite>(AssetDatabase.GetAssetPath(localizationRawImageComponent.TargetImage.texture));
-                }
                 else
                 {
                     imageInfo.id = image.gameObject.name;
@@ -255,7 +245,7 @@ namespace CGame.Localization.Editor
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
-            var so = CreateInstance<LanguageImageSO>();
+            var so = CreateInstance<LanguageSpriteSO>();
             foreach (var imageInfo in ImageInfos.Values.Where(imageInfo => imageInfo.isSelect))
             {
                 so.languageImageInfos.Add(new LanguageImageInfo { id = imageInfo.id, sprite = imageInfo.value });
