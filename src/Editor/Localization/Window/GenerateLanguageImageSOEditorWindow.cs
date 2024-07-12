@@ -248,7 +248,7 @@ namespace CGame.Localization.Editor
             var so = CreateInstance<LanguageSpriteSO>();
             foreach (var imageInfo in ImageInfos.Values.Where(imageInfo => imageInfo.isSelect))
             {
-                so.languageImageInfos.Add(new LanguageImageInfo { id = imageInfo.id, sprite = imageInfo.value });
+                so.languageSpriteInfos.Add(new LanguageSpriteInfo { id = imageInfo.id, sprite = imageInfo.value });
             }
             AssetDatabase.CreateAsset(so, path);
             AssetDatabase.SaveAssets();

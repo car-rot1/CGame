@@ -155,13 +155,13 @@ namespace CGame.Localization.Editor
                         case Texture2D:
                         {
                             foreach (var languageImageSo in languageImageSos)
-                                languageImageSo.languageImageInfos.Add(new LanguageImageInfo { id = spriteLoader.GetImageFileNameWithoutExtension(path), sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path)});
+                                languageImageSo.languageSpriteInfos.Add(new LanguageSpriteInfo { id = spriteLoader.GetImageFileNameWithoutExtension(path), sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path)});
                             break;
                         }
                         case Sprite sprite:
                         {
                             foreach (var languageImageSo in languageImageSos)
-                                languageImageSo.languageImageInfos.Add(new LanguageImageInfo { id = spriteLoader.GetImageFileNameWithoutExtension(path), sprite = sprite });
+                                languageImageSo.languageSpriteInfos.Add(new LanguageSpriteInfo { id = spriteLoader.GetImageFileNameWithoutExtension(path), sprite = sprite });
                             break;
                         }
                     }

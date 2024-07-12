@@ -5,7 +5,7 @@ using UnityEngine;
 namespace CGame.Localization
 {
     [Serializable]
-    public struct LanguageImageInfo
+    public struct LanguageSpriteInfo
     {
         public string id;
         public Sprite sprite;
@@ -13,6 +13,6 @@ namespace CGame.Localization
     
     public class LanguageSpriteSO : ScriptableObject
     {
-        public List<LanguageImageInfo> languageImageInfos = new();
+        public List<LanguageSpriteInfo> languageSpriteInfos = new();
     }
 }

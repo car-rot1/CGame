@@ -45,7 +45,7 @@ namespace CGame.Localization
                     var imageSo = Resources.Load<LanguageSpriteSO>(path);
                     if (imageSo == null)
                         break;
-                    foreach (var languageImageInfo in imageSo.languageImageInfos)
+                    foreach (var languageImageInfo in imageSo.languageSpriteInfos)
                         AllResource[languageImageInfo.id] = languageImageInfo.sprite;
                     return true;
                 }

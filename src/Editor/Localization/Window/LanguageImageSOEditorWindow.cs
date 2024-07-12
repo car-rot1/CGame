@@ -18,7 +18,7 @@ namespace CGame.Localization.Editor
                     return;
                 _target = value;
                 _selects.Clear();
-                for (var i = 0; i < _target.languageImageInfos.Count; i++)
+                for (var i = 0; i < _target.languageSpriteInfos.Count; i++)
                 {
                     _selects.Add(false);
                 }
@@ -124,7 +124,7 @@ namespace CGame.Localization.Editor
             var valueValueWidth = valueWidth - valueLabelWidth;
             
             contentRect.height = -VerticalMargin;
-            foreach (var rowInfo in Target.languageImageInfos)
+            foreach (var rowInfo in Target.languageSpriteInfos)
             {
                 var idValueHeight = Mathf.Max(18, 3 + GUI.skin.textArea.CalcHeight(new GUIContent(rowInfo.id), idValueWidth - 2));
                 contentRect.height += idValueHeight + VerticalMargin;
@@ -134,9 +134,9 @@ namespace CGame.Localization.Editor
             var isSelect = false;
             var rectToValue = new Dictionary<Rect, Sprite>();
             _scrollPos = GUI.BeginScrollView(verticalRects[4], _scrollPos, contentRect);
-            for (var i = 0; i < Target.languageImageInfos.Count; i++)
+            for (var i = 0; i < Target.languageSpriteInfos.Count; i++)
             {
-                var temp = Target.languageImageInfos[i];
+                var temp = Target.languageSpriteInfos[i];
                 
                 var idValueHeight = Mathf.Max(18, 3 + GUI.skin.textArea.CalcHeight(new GUIContent(temp.id), idValueWidth - 2));
                 
@@ -164,7 +164,7 @@ namespace CGame.Localization.Editor
                 
                 if (EditorGUI.EndChangeCheck())
                 {
-                    if (!string.IsNullOrWhiteSpace(idValue) && Target.languageImageInfos.FindIndex(r => r.id == idValue) == -1)
+                    if (!string.IsNullOrWhiteSpace(idValue) && Target.languageSpriteInfos.FindIndex(r => r.id == idValue) == -1)
                         temp.id = idValue;
                     if (valueValue != null)
                         temp.sprite = valueValue;
@@ -173,32 +173,32 @@ namespace CGame.Localization.Editor
                 if (_selects[i])
                     isSelect = true;
 
-                Target.languageImageInfos[i] = temp;
+                Target.languageSpriteInfos[i] = temp;
             }
             GUI.EndScrollView();
             
             rects = verticalRects[6].HorizontalSplit(-1, RemoveButtonWidth, 10, AddButtonWidth);
             if (GUI.Button(rects[1], "Remove"))
             {
-                if (!isSelect && Target.languageImageInfos.Count > 0)
+                if (!isSelect && Target.languageSpriteInfos.Count > 0)
                 {
-                    var index = Target.languageImageInfos.Count - 1;
-                    Target.languageImageInfos.RemoveAt(index);
+                    var index = Target.languageSpriteInfos.Count - 1;
+                    Target.languageSpriteInfos.RemoveAt(index);
                     _selects.RemoveAt(index);
                 }
                 else
-                    for (var i = Target.languageImageInfos.Count - 1; i >= 0; i--)
+                    for (var i = Target.languageSpriteInfos.Count - 1; i >= 0; i--)
                     {
                         if (_selects[i])
                         {
-                            Target.languageImageInfos.RemoveAt(i);
+                            Target.languageSpriteInfos.RemoveAt(i);
                             _selects.RemoveAt(i);
                         }
                     }
             }
             if (GUI.Button(rects[3], "Add"))
             {
-                Target.languageImageInfos.Add(new LanguageImageInfo());
+                Target.languageSpriteInfos.Add(new LanguageSpriteInfo());
                 _selects.Add(false);
             }
             
@@ -230,7 +230,7 @@ namespace CGame.Localization.Editor
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
             
-            foreach (var languageImageInfo in _target.languageImageInfos)
+            foreach (var languageImageInfo in _target.languageSpriteInfos)
             {
                 var texture = languageImageInfo.sprite.GetPartTexture();
                 if (texture.alphaIsTransparency)
