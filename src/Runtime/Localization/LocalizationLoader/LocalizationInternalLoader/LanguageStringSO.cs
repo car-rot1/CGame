@@ -11,6 +11,7 @@ namespace CGame.Localization
         public string text;
     }
     
+    [Serializable]
     public class LanguageStringSO : ScriptableObject
     {
         public List<LanguageTextInfo> languageTextInfos = new();

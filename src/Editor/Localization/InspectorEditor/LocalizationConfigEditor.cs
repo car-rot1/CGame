@@ -16,16 +16,22 @@ namespace CGame.Localization.Editor
 
         private SerializedProperty _languages;
         private SerializedProperty _defaultLanguage;
-        private SerializedProperty _localizationStringLoader;
-        private SerializedProperty _localizationAssetLoaders;
+        private SerializedProperty _stringInternalLoader;
+        private SerializedProperty _assetInternalLoader;
+
+        private SerializedProperty _stringExternalLoader;
+        private SerializedProperty _assetExternalLoaders;
         
         private void OnEnable()
         {
             _target = (LocalizationConfig)target;
             _languages = serializedObject.FindProperty("languages");
             _defaultLanguage = serializedObject.FindProperty("defaultLanguage");
-            _localizationStringLoader = serializedObject.FindProperty("localizationStringLoader");
-            _localizationAssetLoaders = serializedObject.FindProperty("localizationAssetLoaders");
+            _stringInternalLoader = serializedObject.FindProperty("stringInternalLoader");
+            _assetInternalLoader = serializedObject.FindProperty("assetInternalLoader");
+
+            _stringExternalLoader = serializedObject.FindProperty("stringExternalLoader");
+            _assetExternalLoaders = serializedObject.FindProperty("assetExternalLoaders");
             
             int i;
             var languagesSize = _languages.arraySize;
@@ -68,28 +74,31 @@ namespace CGame.Localization.Editor
             if (EditorGUI.EndChangeCheck())
                 _defaultLanguage.stringValue = _allLanguages[_defaultLanguageIndex];
             
-            EditorGUILayout.PropertyField(_localizationStringLoader);
-            EditorGUILayout.PropertyField(_localizationAssetLoaders);
+            EditorGUILayout.PropertyField(_stringInternalLoader);
+            EditorGUILayout.PropertyField(_assetInternalLoader);
+            
+            EditorGUILayout.PropertyField(_stringExternalLoader);
+            EditorGUILayout.PropertyField(_assetExternalLoaders);
             if (GUILayout.Button("AddLoader"))
             {
                 var menu = new GenericMenu();
-                foreach (var type in TypeCache.GetTypesDerivedFrom<LocalizationAssetLoaderBase>().Where(type => !type.IsAbstract))
+                foreach (var type in TypeCache.GetTypesDerivedFrom<LocalizationAssetExternalLoaderBase>().Where(type => !type.IsAbstract))
                 {
                     int i;
-                    for (i = 0; i < _localizationAssetLoaders.arraySize; i++)
+                    for (i = 0; i < _assetExternalLoaders.arraySize; i++)
                     {
-                        if (_localizationAssetLoaders.GetArrayElementAtIndex(i).boxedValue.GetType() == type)
+                        if (_assetExternalLoaders.GetArrayElementAtIndex(i).boxedValue.GetType() == type)
                             break;
                     }
-                    if (i < _localizationAssetLoaders.arraySize)
+                    if (i < _assetExternalLoaders.arraySize)
                         continue;
                     menu.AddItem(new GUIContent(type.Name), false, () =>
                     {
                         var loader = Activator.CreateInstance(type);
-                        var length = _localizationAssetLoaders.arraySize;
-                        _localizationAssetLoaders.InsertArrayElementAtIndex(length);
-                        _localizationAssetLoaders.GetArrayElementAtIndex(length).boxedValue = loader;
-                        _localizationAssetLoaders.serializedObject.ApplyModifiedProperties();
+                        var length = _assetExternalLoaders.arraySize;
+                        _assetExternalLoaders.InsertArrayElementAtIndex(length);
+                        _assetExternalLoaders.GetArrayElementAtIndex(length).boxedValue = loader;
+                        _assetExternalLoaders.serializedObject.ApplyModifiedProperties();
                     });
                 }
                 menu.ShowAsContext();

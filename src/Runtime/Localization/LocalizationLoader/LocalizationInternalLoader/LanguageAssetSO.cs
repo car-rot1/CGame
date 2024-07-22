@@ -12,8 +12,9 @@ namespace CGame.Localization
         public Object asset;
     }
     
+    [Serializable]
     public class LanguageAssetSO : ScriptableObject
     {
-        public List<LanguageAssetInfo> languageImageInfos = new();
+        public List<LanguageAssetInfo> languageAssetInfos = new();
     }
 }

@@ -3,7 +3,7 @@ using Object = UnityEngine.Object;
 
 namespace CGame.Localization
 {
-    public abstract class LocalizationAssetBase<TAsset, TLoader> : MonoBehaviour where TAsset : Object where TLoader : LocalizationAssetLoaderBase
+    public abstract class LocalizationAssetBase<TAsset, TLoader> : MonoBehaviour where TAsset : Object where TLoader : LocalizationAssetExternalLoaderBase
     {
         public string id;
         private TAsset asset;

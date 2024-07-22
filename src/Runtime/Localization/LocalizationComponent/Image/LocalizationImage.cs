@@ -70,7 +70,7 @@ namespace CGame.Localization
             if (SpriteInfoDic.TryGetValue(Local.Language, out var customSprite) && customSprite != null)
                 return customSprite;
             
-            var localSprite = (Sprite)Local.GetAsset(nameof(LocalizationSpriteLoader), Id);
+            var localSprite = (Sprite)Local.GetAsset(nameof(LocalizationSpriteExternalLoader), Id);
             return localSprite != null ? localSprite : sprite;
         }
 

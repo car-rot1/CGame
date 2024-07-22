@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 
 namespace CGame.Localization
@@ -35,10 +34,8 @@ namespace CGame.Localization
     }
     
     [Serializable]
-    public class LocalizationStringLoader
+    public class LocalizationStringExternalLoader
     {
-        [field: SerializeField] public string InternalPath { get; private set; } = "Language/String";
-        [field: SerializeField] public InternalLoadType InternalLoadType { get; private set; }
         [field: SerializeField] public string ExternalPath { get; private set; } = "../Language/Text";
         [field: SerializeField] public CsvFileInfo CsvFileInfo { get; set; } = new()
         {
@@ -55,11 +52,11 @@ namespace CGame.Localization
         {
             fileExtension = ".local.json"
         };
-
-        protected Dictionary<string, string> AllResource { get; private set; } = new();
-        public string GetValue(string id) => AllResource.TryGetValue(id, out var value) ? value : id;
         
-        public void RefreshAllResource(LocalizationSystem localizationSystem, string language)
+        protected Dictionary<string, string> AllResource { get; private set; } = new();
+        public string GetValue(string id) => AllResource.TryGetValue(id, out var value) ? value : null;
+        
+        public void RefreshAllResource(string language)
         {
             AllResource.Clear();
             var csvPath = ExternalPath + '/' + language + CsvFileInfo.fileExtension;
@@ -96,26 +93,6 @@ namespace CGame.Localization
                     AllResource[languageTextJsonInfo.id] = languageTextJsonInfo.text;
                 }
                 return;
-            }
-
-            switch (InternalLoadType)
-            {
-                case InternalLoadType.Resource:
-                {
-                    var path = InternalPath + '/' + language;
-                    var textSO = Resources.Load<LanguageStringSO>(path);
-                    if (textSO == null)
-                        break;
-                    foreach (var languageTextInfo in textSO.languageTextInfos)
-                    {
-                        AllResource[languageTextInfo.id] = languageTextInfo.text;
-                    }
-                    break;
-                }
-                case InternalLoadType.Addressable:
-                    break;
-                case InternalLoadType.Yooasset:
-                    break;
             }
         }
         

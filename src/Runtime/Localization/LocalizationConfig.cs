@@ -12,8 +12,11 @@ namespace CGame.Localization
         [SerializeField] private string defaultLanguage;
         public string DefaultLanguage => defaultLanguage;
         
-        public LocalizationStringLoader localizationStringLoader;
-        [SerializeReference] public List<LocalizationAssetLoaderBase> localizationAssetLoaders;
+        public LocalizationStringInternalLoader stringInternalLoader;
+        public LocalizationAssetInternalLoader assetInternalLoader;
+
+        public LocalizationStringExternalLoader stringExternalLoader;
+        [SerializeReference] public List<LocalizationAssetExternalLoaderBase> assetExternalLoaders;
 
         private static LocalizationConfig _instance;
         public static LocalizationConfig Instance

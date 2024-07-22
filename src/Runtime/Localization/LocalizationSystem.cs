@@ -22,35 +22,42 @@ namespace CGame.Localization
         public event Action<string> OnLanguageChange;
 
         private readonly LocalizationConfig _config = LocalizationConfig.Instance;
-        private readonly Dictionary<string, LocalizationAssetLoaderBase> _localizationAssetLoaders = new();
+        private readonly Dictionary<string, LocalizationAssetExternalLoaderBase> _assetExternalLoaders = new();
 
         protected override void Init()
         {
-            foreach (var localizationAssetLoader in _config.localizationAssetLoaders)
-                _localizationAssetLoaders.Add(localizationAssetLoader.Key, localizationAssetLoader);
+            foreach (var assetExternalLoader in _config.assetExternalLoaders)
+                _assetExternalLoaders.Add(assetExternalLoader.Key, assetExternalLoader);
             Language = _config.DefaultLanguage;
         }
 
         private void RefreshAllResource(string language)
         {
-            _config.localizationStringLoader.RefreshAllResource(this, language);
-            foreach (var localizationAssetLoader in _config.localizationAssetLoaders)
-                localizationAssetLoader.RefreshAllResource(this, language);
+            _config.stringInternalLoader.RefreshAllResource(language);
+            _config.assetInternalLoader.RefreshAllResource(language);
+            
+            _config.stringExternalLoader.RefreshAllResource(language);
+            foreach (var assetExternalLoader in _config.assetExternalLoaders)
+                assetExternalLoader.RefreshAllResource(language);
         }
 
         public string GetString(string id)
         {
-            return _config.localizationStringLoader.GetValue(id);
+            var result = _config.stringExternalLoader.GetValue(id);
+            return string.IsNullOrWhiteSpace(result) ? _config.stringInternalLoader.GetValue(id) : result;
         }
 
         public Object GetAsset(string key, string id)
         {
-            return _localizationAssetLoaders.TryGetValue(key, out var loader) ? loader.GetValue(id) : null;
+            return _assetExternalLoaders.TryGetValue(key, out var externalLoader) ? externalLoader.GetValue(id) : _config.assetInternalLoader.GetValue(id);
         }
         
         public T GetAsset<T>(string key, string id) where T : Object
         {
-            return _localizationAssetLoaders.TryGetValue(key, out var loader) ? (T)loader.GetValue(id) : null;
+            var asset = GetAsset(key, id);
+            if (asset == null)
+                return null;
+            return (T)asset;
         }
     }
 }

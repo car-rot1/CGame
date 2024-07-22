@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using CGame.Editor;
 using UnityEditor;
 using UnityEngine;
 
 namespace CGame.Localization.Editor
 {
-    public class LanguageImageSOEditorWindow : EditorWindow
+    public class LanguageAssetSOEditorWindow : EditorWindow
     {
-        private LanguageSpriteSO _target;
-        private LanguageSpriteSO Target
+        private LanguageAssetSO _target;
+        private LanguageAssetSO Target
         {
             get => _target;
             set
@@ -18,7 +17,7 @@ namespace CGame.Localization.Editor
                     return;
                 _target = value;
                 _selects.Clear();
-                for (var i = 0; i < _target.languageSpriteInfos.Count; i++)
+                for (var i = 0; i < _target.languageAssetInfos.Count; i++)
                 {
                     _selects.Add(false);
                 }
@@ -27,9 +26,9 @@ namespace CGame.Localization.Editor
         
         [SerializeField] private List<bool> _selects = new();
 
-        public static void Open(LanguageSpriteSO target = null)
+        public static void Open(LanguageAssetSO target = null)
         {
-            var window = GetWindow<LanguageImageSOEditorWindow>();
+            var window = GetWindow<LanguageAssetSOEditorWindow>();
 
             window.Target = target;
             window.titleContent = new GUIContent(target == null ? "" : target.name);
@@ -79,7 +78,7 @@ namespace CGame.Localization.Editor
                 RemoveButtonHeight);
             
             var rects = verticalRects[0].HorizontalSplit(-1, 10, ImportButtonWidth, 10, ExportButtonWidth);
-            var obj = (LanguageSpriteSO)EditorGUI.ObjectField(rects[0], Target, typeof(LanguageSpriteSO), true);
+            var obj = (LanguageAssetSO)EditorGUI.ObjectField(rects[0], Target, typeof(LanguageAssetSO), true);
             if (obj != null)
                 Target = obj;
             if (GUI.Button(rects[2], "Import"))
@@ -124,7 +123,7 @@ namespace CGame.Localization.Editor
             var valueValueWidth = valueWidth - valueLabelWidth;
             
             contentRect.height = -VerticalMargin;
-            foreach (var rowInfo in Target.languageSpriteInfos)
+            foreach (var rowInfo in Target.languageAssetInfos)
             {
                 var idValueHeight = Mathf.Max(18, 3 + GUI.skin.textArea.CalcHeight(new GUIContent(rowInfo.id), idValueWidth - 2));
                 contentRect.height += idValueHeight + VerticalMargin;
@@ -132,11 +131,11 @@ namespace CGame.Localization.Editor
             
             var itemRect = new Rect(contentRect);
             var isSelect = false;
-            var rectToValue = new Dictionary<Rect, Sprite>();
+            var rectToValue = new Dictionary<Rect, Object>();
             _scrollPos = GUI.BeginScrollView(verticalRects[4], _scrollPos, contentRect);
-            for (var i = 0; i < Target.languageSpriteInfos.Count; i++)
+            for (var i = 0; i < Target.languageAssetInfos.Count; i++)
             {
-                var temp = Target.languageSpriteInfos[i];
+                var temp = Target.languageAssetInfos[i];
                 
                 var idValueHeight = Mathf.Max(18, 3 + GUI.skin.textArea.CalcHeight(new GUIContent(temp.id), idValueWidth - 2));
                 
@@ -159,58 +158,59 @@ namespace CGame.Localization.Editor
                 rects[3].height = 18;
                 var valueRects = rects[3].HorizontalSplit(valueLabelWidth, -1);
                 EditorGUI.LabelField(valueRects[0], "Value :");
-                var valueValue = (Sprite)EditorGUI.ObjectField(valueRects[1], temp.sprite, typeof(Sprite), true);
-                rectToValue[valueRects[1]] = temp.sprite;
+                var valueValue = EditorGUI.ObjectField(valueRects[1], temp.asset, typeof(Object), true);
+                rectToValue[valueRects[1]] = temp.asset;
                 
                 if (EditorGUI.EndChangeCheck())
                 {
-                    if (!string.IsNullOrWhiteSpace(idValue) && Target.languageSpriteInfos.FindIndex(r => r.id == idValue) == -1)
+                    if (!string.IsNullOrWhiteSpace(idValue) && Target.languageAssetInfos.FindIndex(r => r.id == idValue) == -1)
                         temp.id = idValue;
-                    if (valueValue != null)
-                        temp.sprite = valueValue;
+                    temp.asset = valueValue;
                 }
 
                 if (_selects[i])
                     isSelect = true;
 
-                Target.languageSpriteInfos[i] = temp;
+                Target.languageAssetInfos[i] = temp;
             }
             GUI.EndScrollView();
             
             rects = verticalRects[6].HorizontalSplit(-1, RemoveButtonWidth, 10, AddButtonWidth);
             if (GUI.Button(rects[1], "Remove"))
             {
-                if (!isSelect && Target.languageSpriteInfos.Count > 0)
+                if (!isSelect && Target.languageAssetInfos.Count > 0)
                 {
-                    var index = Target.languageSpriteInfos.Count - 1;
-                    Target.languageSpriteInfos.RemoveAt(index);
+                    var index = Target.languageAssetInfos.Count - 1;
+                    Target.languageAssetInfos.RemoveAt(index);
                     _selects.RemoveAt(index);
                 }
                 else
-                    for (var i = Target.languageSpriteInfos.Count - 1; i >= 0; i--)
+                    for (var i = Target.languageAssetInfos.Count - 1; i >= 0; i--)
                     {
                         if (_selects[i])
                         {
-                            Target.languageSpriteInfos.RemoveAt(i);
+                            Target.languageAssetInfos.RemoveAt(i);
                             _selects.RemoveAt(i);
                         }
                     }
             }
             if (GUI.Button(rects[3], "Add"))
             {
-                Target.languageSpriteInfos.Add(new LanguageSpriteInfo());
+                Target.languageAssetInfos.Add(new LanguageAssetInfo());
                 _selects.Add(false);
             }
             
             foreach (var (valueRect, value) in rectToValue)
             {
+                if (value is not Sprite sprite)
+                    continue;
                 if (valueRect.Contains(Event.current.mousePosition))
                 {
                     if (value == null)
                         return;
                     
                     var imageRect = new Rect(Event.current.mousePosition, new Vector2(100, 100));
-                    EditorGUI.DrawTextureTransparent(imageRect, value.GetPartTexture(), ScaleMode.ScaleToFit);
+                    EditorGUI.DrawTextureTransparent(imageRect, sprite.GetPartTexture(), ScaleMode.ScaleToFit);
                 }
             }
         }
@@ -222,23 +222,23 @@ namespace CGame.Localization.Editor
         
         private void ExportImageFile()
         {
-            var path = EditorUtility.SaveFolderPanel(nameof(ExportImageFile), Application.dataPath, "");
-            if (string.IsNullOrWhiteSpace(path))
-                return;
-
-            path = path + '/' + _target.name + '/';
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-            
-            foreach (var languageImageInfo in _target.languageSpriteInfos)
-            {
-                var texture = languageImageInfo.sprite.GetPartTexture();
-                if (texture.alphaIsTransparency)
-                    File.WriteAllBytes(path + languageImageInfo.id + ".png", texture.EncodeToPNG());
-                else
-                    File.WriteAllBytes(path + languageImageInfo.id + ".jpg", texture.EncodeToJPG());
-            }
-            AssetDatabase.Refresh();
+            // var path = EditorUtility.SaveFolderPanel(nameof(ExportImageFile), Application.dataPath, "");
+            // if (string.IsNullOrWhiteSpace(path))
+            //     return;
+            //
+            // path = path + '/' + _target.name + '/';
+            // if (!Directory.Exists(path))
+            //     Directory.CreateDirectory(path);
+            //
+            // foreach (var languageImageInfo in _target.languageAssetInfos)
+            // {
+            //     var texture = languageImageInfo.sprite.GetPartTexture();
+            //     if (texture.alphaIsTransparency)
+            //         File.WriteAllBytes(path + languageImageInfo.id + ".png", texture.EncodeToPNG());
+            //     else
+            //         File.WriteAllBytes(path + languageImageInfo.id + ".jpg", texture.EncodeToJPG());
+            // }
+            // AssetDatabase.Refresh();
         }
     }
 }

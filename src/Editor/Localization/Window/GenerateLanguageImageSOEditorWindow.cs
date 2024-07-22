@@ -245,10 +245,10 @@ namespace CGame.Localization.Editor
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
-            var so = CreateInstance<LanguageSpriteSO>();
+            var so = CreateInstance<LanguageAssetSO>();
             foreach (var imageInfo in ImageInfos.Values.Where(imageInfo => imageInfo.isSelect))
             {
-                so.languageSpriteInfos.Add(new LanguageSpriteInfo { id = imageInfo.id, sprite = imageInfo.value });
+                so.languageAssetInfos.Add(new LanguageAssetInfo { id = imageInfo.id, asset = imageInfo.value });
             }
             AssetDatabase.CreateAsset(so, path);
             AssetDatabase.SaveAssets();
