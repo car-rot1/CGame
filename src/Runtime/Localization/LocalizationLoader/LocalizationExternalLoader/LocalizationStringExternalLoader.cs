@@ -40,7 +40,7 @@ namespace CGame.Localization
         [field: SerializeField] public CsvFileInfo CsvFileInfo { get; set; } = new()
         {
             fileExtension = ".local.csv",
-            ignoreHead = true,
+            ignoreHead = false,
             separator = ',',
             linefeed = '\n'
         };
@@ -59,7 +59,7 @@ namespace CGame.Localization
         public void RefreshAllResource(string language)
         {
             AllResource.Clear();
-            var csvPath = ExternalPath + '/' + language + CsvFileInfo.fileExtension;
+            var csvPath = Application.dataPath + '/' + ExternalPath + '/' + language + CsvFileInfo.fileExtension;
             if (File.Exists(csvPath))
             {
                 var csvValue = CsvFileController.GetValue<(string id, string text)>(csvPath,
@@ -71,7 +71,7 @@ namespace CGame.Localization
                 return;
             }
                 
-            var excelPath = ExternalPath + '/' + language + ExcelFileInfo.fileExtension;
+            var excelPath = Application.dataPath + '/' + ExternalPath + '/' + language + ExcelFileInfo.fileExtension;
             if (File.Exists(excelPath))
             {
                 var excelValue = ExcelUtility.ReadExcel(excelPath);
@@ -84,7 +84,7 @@ namespace CGame.Localization
                 return;
             }
                 
-            var jsonPath = ExternalPath + '/' + language + JsonFileInfo.fileExtension;
+            var jsonPath = Application.dataPath + '/' + ExternalPath + '/' + language + JsonFileInfo.fileExtension;
             if (File.Exists(jsonPath))
             {
                 var jsonValue = NewJsonFileController.GetValue<LanguageTextJsonInfo>(jsonPath);

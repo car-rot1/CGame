@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections.Generic;
 using CGame;
 using UnityEngine;
@@ -322,3 +323,4 @@ public class WaveMap : MonoBehaviour, ISerializationCallbackReceiver
         _init = false;
     }
 }
+#endif
