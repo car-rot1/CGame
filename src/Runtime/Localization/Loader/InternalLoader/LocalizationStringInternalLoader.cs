@@ -7,8 +7,11 @@ namespace CGame.Localization
     [Serializable]
     public class LocalizationStringInternalLoader
     {
-        [field: SerializeField] public string InternalPath { get; private set; } = "Language/String";
-        [field: SerializeField] public InternalLoadType InternalLoadType { get; private set; }
+        [SerializeField] private string internalPath = "Language/String";
+        public string InternalPath => internalPath;
+
+        [SerializeField] private InternalLoadType internalLoadType;
+        public InternalLoadType InternalLoadType => internalLoadType;
         
         protected Dictionary<string, string> AllResource { get; private set; } = new();
         public string GetValue(string id) => AllResource.TryGetValue(id, out var value) ? value : id;
@@ -17,15 +20,15 @@ namespace CGame.Localization
         {
             AllResource.Clear();
 
-            switch (InternalLoadType)
+            switch (internalLoadType)
             {
                 case InternalLoadType.Resource:
                 {
-                    var path = InternalPath + '/' + language;
-                    var textSO = Resources.Load<LanguageStringSO>(path);
-                    if (textSO == null)
+                    var path = internalPath + '/' + language;
+                    var textSo = Resources.Load<LocalizationStringSO>(path);
+                    if (textSo == null)
                         break;
-                    foreach (var languageTextInfo in textSO.languageTextInfos)
+                    foreach (var languageTextInfo in textSo.localizationTextInfos)
                     {
                         AllResource[languageTextInfo.id] = languageTextInfo.text;
                     }

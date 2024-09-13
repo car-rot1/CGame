@@ -220,10 +220,10 @@ namespace CGame.Localization.Editor
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
-            var so = CreateInstance<LanguageStringSO>();
+            var so = CreateInstance<LocalizationStringSO>();
             foreach (var textInfo in TextInfos.Values.Where(imageInfo => imageInfo.isSelect))
             {
-                so.languageTextInfos.Add(new LanguageTextInfo { id = textInfo.id, text = textInfo.value });
+                so.localizationTextInfos.Add(new LocalizationTextInfo { id = textInfo.id, text = textInfo.value });
             }
             AssetDatabase.CreateAsset(so, path);
             AssetDatabase.SaveAssets();

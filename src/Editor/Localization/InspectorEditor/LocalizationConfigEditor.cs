@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -62,6 +63,46 @@ namespace CGame.Localization.Editor
             EditorGUI.EndDisabledGroup();
             
             EditorGUILayout.PropertyField(_languages);
+            if (GUILayout.Button("Create All Language Directory"))
+            {
+#if UNITY_2022
+                var stringInternalLoader = (LocalizationStringInternalLoader)_stringInternalLoader.boxedValue;
+#else
+                var stringInternalLoader = (LocalizationStringInternalLoader)_stringInternalLoader.managedReferenceValue;
+#endif
+                var stringInternalLoaderPath = stringInternalLoader.InternalLoadType switch
+                {
+                    InternalLoadType.Resource => Application.dataPath + "/Resources/" + stringInternalLoader.InternalPath,
+                    InternalLoadType.Addressable => Application.dataPath + "/" + stringInternalLoader.InternalPath,
+                    InternalLoadType.Yooasset => Application.dataPath + "/" + stringInternalLoader.InternalPath,
+                    _ => ""
+                };
+                
+#if UNITY_2022
+                var assetInternalLoader = (LocalizationAssetInternalLoader)_assetInternalLoader.boxedValue;
+#else
+                var assetInternalLoader = (LocalizationAssetInternalLoader)_assetInternalLoader.managedReferenceValue;
+#endif
+                var assetInternalLoaderPath = assetInternalLoader.InternalLoadType switch
+                {
+                    InternalLoadType.Resource => Application.dataPath + "/Resources/" + assetInternalLoader.InternalPath,
+                    InternalLoadType.Addressable => Application.dataPath + "/" + assetInternalLoader.InternalPath,
+                    InternalLoadType.Yooasset => Application.dataPath + "/" + assetInternalLoader.InternalPath,
+                    _ => ""
+                };
+                
+                for (var i = 0; i < _languages.arraySize; i++)
+                {
+                    var stringPath = stringInternalLoaderPath + '/' + _languages.GetArrayElementAtIndex(i).stringValue;
+                    var assetPath = assetInternalLoaderPath + '/' + _languages.GetArrayElementAtIndex(i).stringValue;
+                    if (!Directory.Exists(stringPath))
+                        Directory.CreateDirectory(stringPath);
+                    if (!Directory.Exists(assetPath))
+                        Directory.CreateDirectory(assetPath);
+                }
+                
+                AssetDatabase.Refresh();
+            }
             
             _allLanguage.Clear();
             for (var i = 0; i < _languages.arraySize; i++)

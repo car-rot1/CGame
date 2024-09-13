@@ -7,8 +7,8 @@ namespace CGame.Localization.Editor
 {
     public class LanguageTextSOEditorWindow : EditorWindow
     {
-        private LanguageStringSO _target;
-        private LanguageStringSO Target
+        private LocalizationStringSO _target;
+        private LocalizationStringSO Target
         {
             get => _target;
             set
@@ -17,7 +17,7 @@ namespace CGame.Localization.Editor
                     return;
                 _target = value;
                 _selects.Clear();
-                for (var i = 0; i < _target.languageTextInfos.Count; i++)
+                for (var i = 0; i < _target.localizationTextInfos.Count; i++)
                 {
                     _selects.Add(false);
                 }
@@ -28,7 +28,7 @@ namespace CGame.Localization.Editor
 
         private LocalizationConfig _config;
 
-        public static void Open(LanguageStringSO target = null)
+        public static void Open(LocalizationStringSO target = null)
         {
             var window = GetWindow<LanguageTextSOEditorWindow>();
 
@@ -81,7 +81,7 @@ namespace CGame.Localization.Editor
                 RemoveButtonHeight);
 
             var rects = verticalRects[0].HorizontalSplit(-1, 10, ImportButtonWidth, 10, ExportButtonWidth);
-            var obj = (LanguageStringSO)EditorGUI.ObjectField(rects[0], Target, typeof(LanguageStringSO), true);
+            var obj = (LocalizationStringSO)EditorGUI.ObjectField(rects[0], Target, typeof(LocalizationStringSO), true);
             if (obj != null)
                 Target = obj;
             if (GUI.Button(rects[2], "Import"))
@@ -130,7 +130,7 @@ namespace CGame.Localization.Editor
             var valueValueWidth = valueWidth - valueLabelWidth;
             
             contentRect.height = -VerticalMargin;
-            foreach (var rowInfo in Target.languageTextInfos)
+            foreach (var rowInfo in Target.localizationTextInfos)
             {
                 var idValueHeight = Mathf.Max(18, 3 + GUI.skin.textArea.CalcHeight(new GUIContent(rowInfo.id), idValueWidth - 2));
                 var valueValueHeight = Mathf.Max(18, 3 + GUI.skin.textArea.CalcHeight(new GUIContent(rowInfo.text), valueValueWidth - 2));
@@ -141,9 +141,9 @@ namespace CGame.Localization.Editor
             var itemRect = new Rect(contentRect);
             var isSelect = false;
             _scrollPos = GUI.BeginScrollView(verticalRects[4], _scrollPos, contentRect);
-            for (var i = 0; i < Target.languageTextInfos.Count; i++)
+            for (var i = 0; i < Target.localizationTextInfos.Count; i++)
             {
-                var temp = Target.languageTextInfos[i];
+                var temp = Target.localizationTextInfos[i];
                 
                 var idValueHeight = Mathf.Max(18, 3 + GUI.skin.textArea.CalcHeight(new GUIContent(temp.id), idValueWidth - 2));
                 var valueValueHeight = Mathf.Max(18, 3 + GUI.skin.textArea.CalcHeight(new GUIContent(temp.text), valueValueWidth - 2));
@@ -173,7 +173,7 @@ namespace CGame.Localization.Editor
                 
                 if (EditorGUI.EndChangeCheck())
                 {
-                    if (!string.IsNullOrWhiteSpace(idValue) && Target.languageTextInfos.FindIndex(r => r.id == idValue) == -1)
+                    if (!string.IsNullOrWhiteSpace(idValue) && Target.localizationTextInfos.FindIndex(r => r.id == idValue) == -1)
                         temp.id = idValue;
                     if (!string.IsNullOrWhiteSpace(valueValue))
                         temp.text = valueValue;
@@ -182,26 +182,26 @@ namespace CGame.Localization.Editor
                 if (_selects[i])
                     isSelect = true;
 
-                Target.languageTextInfos[i] = temp;
+                Target.localizationTextInfos[i] = temp;
             }
             GUI.EndScrollView();
             
             rects = verticalRects[6].HorizontalSplit(-1, RemoveButtonWidth, 10, AddButtonWidth);
             if (GUI.Button(rects[1], "Remove"))
             {
-                if (!isSelect && Target.languageTextInfos.Count > 0)
+                if (!isSelect && Target.localizationTextInfos.Count > 0)
                 {
-                    var index = Target.languageTextInfos.Count - 1;
-                    Target.languageTextInfos.RemoveAt(index);
+                    var index = Target.localizationTextInfos.Count - 1;
+                    Target.localizationTextInfos.RemoveAt(index);
                     _selects.RemoveAt(index);
                 }
                 else
                 {
-                    for (var i = Target.languageTextInfos.Count - 1; i >= 0; i--)
+                    for (var i = Target.localizationTextInfos.Count - 1; i >= 0; i--)
                     {
                         if (_selects[i])
                         {
-                            Target.languageTextInfos.RemoveAt(i);
+                            Target.localizationTextInfos.RemoveAt(i);
                             _selects.RemoveAt(i);
                         }
                     }
@@ -209,7 +209,7 @@ namespace CGame.Localization.Editor
             }
             if (GUI.Button(rects[3], "Add"))
             {
-                Target.languageTextInfos.Add(new LanguageTextInfo());
+                Target.localizationTextInfos.Add(new LocalizationTextInfo());
                 _selects.Add(false);
             }
         }
@@ -222,9 +222,9 @@ namespace CGame.Localization.Editor
             if (string.IsNullOrWhiteSpace(path))
                 return;
             
-            foreach (var languageTextInfo in CsvFileController.GetValue<LanguageTextInfo>(path, _config.stringExternalLoader.CsvFileInfo.ignoreHead, _config.stringExternalLoader.CsvFileInfo.separator, _config.stringExternalLoader.CsvFileInfo.linefeed))
+            foreach (var languageTextInfo in CsvFileController.GetValue<LocalizationTextInfo>(path, _config.stringExternalLoader.CsvFileInfo.ignoreHead, _config.stringExternalLoader.CsvFileInfo.separator, _config.stringExternalLoader.CsvFileInfo.linefeed))
             {
-                Target.languageTextInfos.Add(languageTextInfo);
+                Target.localizationTextInfos.Add(languageTextInfo);
                 _selects.Add(false);
             }
         }
@@ -238,7 +238,7 @@ namespace CGame.Localization.Editor
             var value = ExcelUtility.ReadExcel(path);
             for (var i = 0; i < value.GetLength(0); i++)
             {
-                Target.languageTextInfos.Add(new LanguageTextInfo { id = value[i, 0].ToString(), text = value[i, 1].ToString() });
+                Target.localizationTextInfos.Add(new LocalizationTextInfo { id = value[i, 0].ToString(), text = value[i, 1].ToString() });
                 _selects.Add(false);
             }
         }
@@ -249,9 +249,9 @@ namespace CGame.Localization.Editor
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
-            foreach (var languageTextInfo in NewJsonFileController.GetValue<LanguageTextInfo>(path))
+            foreach (var languageTextInfo in NewJsonFileController.GetValue<LocalizationTextInfo>(path))
             {
-                Target.languageTextInfos.Add(languageTextInfo);
+                Target.localizationTextInfos.Add(languageTextInfo);
                 _selects.Add(false);
             }
         }
@@ -262,7 +262,7 @@ namespace CGame.Localization.Editor
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
-            CsvFileController.SetValue(path, _target.languageTextInfos, _config.stringExternalLoader.CsvFileInfo.ignoreHead, _config.stringExternalLoader.CsvFileInfo.separator, _config.stringExternalLoader.CsvFileInfo.linefeed);
+            CsvFileController.SetValue(path, _target.localizationTextInfos, _config.stringExternalLoader.CsvFileInfo.ignoreHead, _config.stringExternalLoader.CsvFileInfo.separator, _config.stringExternalLoader.CsvFileInfo.linefeed);
         }
         
         private void ExportExcelFile()
@@ -271,10 +271,10 @@ namespace CGame.Localization.Editor
             if (string.IsNullOrWhiteSpace(path))
                 return;
 
-            var value = new string[_target.languageTextInfos.Count, 2];
-            for (var i = 0; i < _target.languageTextInfos.Count; i++)
+            var value = new string[_target.localizationTextInfos.Count, 2];
+            for (var i = 0; i < _target.localizationTextInfos.Count; i++)
             {
-                var languageTextInfo = _target.languageTextInfos[i];
+                var languageTextInfo = _target.localizationTextInfos[i];
                 value[i, 0] = languageTextInfo.id;
                 value[i, 1] = languageTextInfo.text;
             }
@@ -287,7 +287,7 @@ namespace CGame.Localization.Editor
             if (string.IsNullOrWhiteSpace(path))
                 return;
             
-            NewJsonFileController.SetValue(path, _target.languageTextInfos);
+            NewJsonFileController.SetValue(path, _target.localizationTextInfos);
         }
     }
 }

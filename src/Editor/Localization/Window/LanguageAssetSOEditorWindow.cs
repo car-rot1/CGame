@@ -7,8 +7,8 @@ namespace CGame.Localization.Editor
 {
     public class LanguageAssetSOEditorWindow : EditorWindow
     {
-        private LanguageAssetSO _target;
-        private LanguageAssetSO Target
+        private LocalizationAssetSO _target;
+        private LocalizationAssetSO Target
         {
             get => _target;
             set
@@ -17,7 +17,7 @@ namespace CGame.Localization.Editor
                     return;
                 _target = value;
                 _selects.Clear();
-                for (var i = 0; i < _target.languageAssetInfos.Count; i++)
+                for (var i = 0; i < _target.localizationAssetInfos.Count; i++)
                 {
                     _selects.Add(false);
                 }
@@ -26,7 +26,7 @@ namespace CGame.Localization.Editor
         
         [SerializeField] private List<bool> _selects = new();
 
-        public static void Open(LanguageAssetSO target = null)
+        public static void Open(LocalizationAssetSO target = null)
         {
             var window = GetWindow<LanguageAssetSOEditorWindow>();
 
@@ -78,7 +78,7 @@ namespace CGame.Localization.Editor
                 RemoveButtonHeight);
             
             var rects = verticalRects[0].HorizontalSplit(-1, 10, ImportButtonWidth, 10, ExportButtonWidth);
-            var obj = (LanguageAssetSO)EditorGUI.ObjectField(rects[0], Target, typeof(LanguageAssetSO), true);
+            var obj = (LocalizationAssetSO)EditorGUI.ObjectField(rects[0], Target, typeof(LocalizationAssetSO), true);
             if (obj != null)
                 Target = obj;
             if (GUI.Button(rects[2], "Import"))
@@ -123,7 +123,7 @@ namespace CGame.Localization.Editor
             var valueValueWidth = valueWidth - valueLabelWidth;
             
             contentRect.height = -VerticalMargin;
-            foreach (var rowInfo in Target.languageAssetInfos)
+            foreach (var rowInfo in Target.localizationAssetInfos)
             {
                 var idValueHeight = Mathf.Max(18, 3 + GUI.skin.textArea.CalcHeight(new GUIContent(rowInfo.id), idValueWidth - 2));
                 contentRect.height += idValueHeight + VerticalMargin;
@@ -133,9 +133,9 @@ namespace CGame.Localization.Editor
             var isSelect = false;
             var rectToValue = new Dictionary<Rect, Object>();
             _scrollPos = GUI.BeginScrollView(verticalRects[4], _scrollPos, contentRect);
-            for (var i = 0; i < Target.languageAssetInfos.Count; i++)
+            for (var i = 0; i < Target.localizationAssetInfos.Count; i++)
             {
-                var temp = Target.languageAssetInfos[i];
+                var temp = Target.localizationAssetInfos[i];
                 
                 var idValueHeight = Mathf.Max(18, 3 + GUI.skin.textArea.CalcHeight(new GUIContent(temp.id), idValueWidth - 2));
                 
@@ -163,7 +163,7 @@ namespace CGame.Localization.Editor
                 
                 if (EditorGUI.EndChangeCheck())
                 {
-                    if (!string.IsNullOrWhiteSpace(idValue) && Target.languageAssetInfos.FindIndex(r => r.id == idValue) == -1)
+                    if (!string.IsNullOrWhiteSpace(idValue) && Target.localizationAssetInfos.FindIndex(r => r.id == idValue) == -1)
                         temp.id = idValue;
                     temp.asset = valueValue;
                 }
@@ -171,32 +171,32 @@ namespace CGame.Localization.Editor
                 if (_selects[i])
                     isSelect = true;
 
-                Target.languageAssetInfos[i] = temp;
+                Target.localizationAssetInfos[i] = temp;
             }
             GUI.EndScrollView();
             
             rects = verticalRects[6].HorizontalSplit(-1, RemoveButtonWidth, 10, AddButtonWidth);
             if (GUI.Button(rects[1], "Remove"))
             {
-                if (!isSelect && Target.languageAssetInfos.Count > 0)
+                if (!isSelect && Target.localizationAssetInfos.Count > 0)
                 {
-                    var index = Target.languageAssetInfos.Count - 1;
-                    Target.languageAssetInfos.RemoveAt(index);
+                    var index = Target.localizationAssetInfos.Count - 1;
+                    Target.localizationAssetInfos.RemoveAt(index);
                     _selects.RemoveAt(index);
                 }
                 else
-                    for (var i = Target.languageAssetInfos.Count - 1; i >= 0; i--)
+                    for (var i = Target.localizationAssetInfos.Count - 1; i >= 0; i--)
                     {
                         if (_selects[i])
                         {
-                            Target.languageAssetInfos.RemoveAt(i);
+                            Target.localizationAssetInfos.RemoveAt(i);
                             _selects.RemoveAt(i);
                         }
                     }
             }
             if (GUI.Button(rects[3], "Add"))
             {
-                Target.languageAssetInfos.Add(new LanguageAssetInfo());
+                Target.localizationAssetInfos.Add(new LocalizationAssetInfo());
                 _selects.Add(false);
             }
             

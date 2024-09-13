@@ -55,7 +55,11 @@ namespace CGame.Editor
             var rect = new Rect(position.position, new Vector2(position.width, 18));
 
             var horizontalRect = rect.HorizontalSplit(EditorGUIUtility.labelWidth + 2.0f, -1);
-            _foldout = EditorGUI.Foldout(horizontalRect[0], _foldout, label);
+            var fieldValue = fieldInfo.GetValue(property.serializedObject.targetObject);
+            if (fieldValue != null)
+                _foldout = EditorGUI.Foldout(horizontalRect[0], _foldout, new GUIContent(label.text + $" (Type : {fieldValue.GetType().Name}) "), true);
+            else
+                EditorGUI.LabelField(horizontalRect[0], label);
             if (GUI.Button(horizontalRect[1], "New Value"))
             {
                 var menu = new GenericMenu();
@@ -70,6 +74,7 @@ namespace CGame.Editor
                             value = index == 0 ? null : Activator.CreateInstance(_allType[index - 1]);
                             _allTypeValue.Add(name, value);
                         }
+                        Undo.RegisterCompleteObjectUndo(property.serializedObject.targetObject, property.serializedObject.targetObject.name);
                         fieldInfo.SetValue(property.serializedObject.targetObject, value);
                     });
                 }

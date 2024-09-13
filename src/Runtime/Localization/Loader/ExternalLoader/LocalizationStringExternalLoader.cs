@@ -36,22 +36,29 @@ namespace CGame.Localization
     [Serializable]
     public class LocalizationStringExternalLoader
     {
-        [field: SerializeField] public string ExternalPath { get; private set; } = "../Language/Text";
-        [field: SerializeField] public CsvFileInfo CsvFileInfo { get; set; } = new()
+        [SerializeField] private string externalPath = "../Language/Text";
+        public string ExternalPath => externalPath;
+
+        [SerializeField] private CsvFileInfo csvFileInfo = new()
         {
             fileExtension = ".local.csv",
             ignoreHead = false,
             separator = ',',
             linefeed = '\n'
         };
-        [field: SerializeField] public ExcelFileInfo ExcelFileInfo { get; set; } = new()
+        public CsvFileInfo CsvFileInfo => csvFileInfo;
+
+        [SerializeField] private ExcelFileInfo excelFileInfo = new()
         {
             fileExtension = ".local.xlsx"
         };
-        [field: SerializeField] public JsonFileInfo JsonFileInfo { get; set; } = new()
+        public ExcelFileInfo ExcelFileInfo => excelFileInfo;
+
+        [SerializeField] private JsonFileInfo jsonFileInfo = new()
         {
             fileExtension = ".local.json"
         };
+        public JsonFileInfo JsonFileInfo => jsonFileInfo;
         
         protected Dictionary<string, string> AllResource { get; private set; } = new();
         public string GetValue(string id) => AllResource.TryGetValue(id, out var value) ? value : null;
@@ -59,7 +66,7 @@ namespace CGame.Localization
         public void RefreshAllResource(string language)
         {
             AllResource.Clear();
-            var csvPath = Application.dataPath + '/' + ExternalPath + '/' + language + CsvFileInfo.fileExtension;
+            var csvPath = Application.dataPath + '/' + externalPath + '/' + language + CsvFileInfo.fileExtension;
             if (File.Exists(csvPath))
             {
                 var csvValue = CsvFileController.GetValue<(string id, string text)>(csvPath,
@@ -71,7 +78,7 @@ namespace CGame.Localization
                 return;
             }
                 
-            var excelPath = Application.dataPath + '/' + ExternalPath + '/' + language + ExcelFileInfo.fileExtension;
+            var excelPath = Application.dataPath + '/' + externalPath + '/' + language + ExcelFileInfo.fileExtension;
             if (File.Exists(excelPath))
             {
                 var excelValue = ExcelUtility.ReadExcel(excelPath);
@@ -84,7 +91,7 @@ namespace CGame.Localization
                 return;
             }
                 
-            var jsonPath = Application.dataPath + '/' + ExternalPath + '/' + language + JsonFileInfo.fileExtension;
+            var jsonPath = Application.dataPath + '/' + externalPath + '/' + language + JsonFileInfo.fileExtension;
             if (File.Exists(jsonPath))
             {
                 var jsonValue = NewJsonFileController.GetValue<LanguageTextJsonInfo>(jsonPath);

@@ -23,14 +23,11 @@ namespace CGame.Localization
         {
             get
             {
-                if (_instance == null)
-                    _instance = Resources.Load<LocalizationConfig>("Language/" + nameof(LocalizationConfig));
 #if UNITY_EDITOR
+                _instance = GetConfig();
+#else
                 if (_instance == null)
-                {
-                    CreateConfig();
                     _instance = Resources.Load<LocalizationConfig>("Language/" + nameof(LocalizationConfig));
-                }
 #endif
                 return _instance;
             }
@@ -41,10 +38,15 @@ namespace CGame.Localization
         [MenuItem("Localization/Create Config")]
         private static void CreateConfig()
         {
+            Selection.activeObject = GetConfig();
+        }
+
+        private static LocalizationConfig GetConfig()
+        {
             var config = Resources.Load<LocalizationConfig>("Language/" + nameof(LocalizationConfig));
             if (config != null)
-                return;
-
+                return config;
+            
             if (!Directory.Exists(Application.dataPath + "/Resources/Language"))
                 Directory.CreateDirectory(Application.dataPath + "/Resources/Language");
             
@@ -52,8 +54,8 @@ namespace CGame.Localization
             AssetDatabase.CreateAsset(config, "Assets/Resources/Language/LocalizationConfig.asset");
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-
-            Selection.activeObject = config;
+            
+            return config;
         }
 #endif
     }
