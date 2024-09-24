@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace CGame
@@ -8,7 +7,7 @@ namespace CGame
         public InventorySlotBase<T>[] slots;
         public InventoryBase<T> CurrentInventory { get; private set; }
         
-        protected virtual void Init(InventoryBase<T> inventory)
+        public virtual void Init(InventoryBase<T> inventory)
         {
             CurrentInventory = inventory;
 
@@ -42,7 +41,7 @@ namespace CGame
             slots[index].SetItem(info.item, info.num);
         }
 
-        protected virtual void DeInit()
+        public virtual void DeInit()
         {
             foreach (var slot in slots)
             {

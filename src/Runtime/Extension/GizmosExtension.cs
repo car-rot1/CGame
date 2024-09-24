@@ -8,10 +8,10 @@ namespace CGame
         {
             var points = new Vector3[]
             {
-                new(rect.xMin, -rect.yMin),
-                new(rect.xMin, -rect.yMax),
-                new(rect.xMax, -rect.yMax),
-                new(rect.xMax, -rect.yMin)
+                new(rect.xMin, rect.yMin),
+                new(rect.xMin, rect.yMax),
+                new(rect.xMax, rect.yMax),
+                new(rect.xMax, rect.yMin)
             };
             for (var i = 0; i < points.Length; i++)
             {
@@ -24,10 +24,10 @@ namespace CGame
         {
             var points = new Vector3[]
             {
-                new(rect.xMin, -rect.yMin),
-                new(rect.xMin, -rect.yMax),
-                new(rect.xMax, -rect.yMax),
-                new(rect.xMax, -rect.yMin)
+                new(rect.xMin, rect.yMin),
+                new(rect.xMin, rect.yMax),
+                new(rect.xMax, rect.yMax),
+                new(rect.xMax, rect.yMin)
             };
             for (var i = 0; i < points.Length; i++)
             {

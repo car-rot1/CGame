@@ -18,10 +18,10 @@ namespace CGame
     
     public abstract class InventoryBase<T> where T : IInventoryItem
     {
-        protected InventorySlotInfo<T>[] inventorySlotInfos;
+        protected readonly InventorySlotInfo<T>[] inventorySlotInfos;
         private int _freeCapacity;
-        public event Action<T, int, int> OnAddItem; 
-        public event Action<T, int, int> OnRemoveItem; 
+        public event Action<T, int, int> OnAddItem;
+        public event Action<T, int, int> OnRemoveItem;
 
         private readonly List<int> _freeInventorySlotTemp;
 

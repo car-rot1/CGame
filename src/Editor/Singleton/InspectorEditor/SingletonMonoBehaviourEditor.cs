@@ -1,14 +1,25 @@
+#if ODIN_INSPECTOR_3
+using Sirenix.OdinInspector.Editor;
+#endif
 using UnityEditor;
 using UnityEngine;
 
 namespace CGame.Editor
 {
     [CustomEditor(typeof(SingletonMonoBehaviour), true)]
+#if ODIN_INSPECTOR_3
+    public class SingletonMonoBehaviourEditor : OdinEditor
+#else
     public class SingletonMonoBehaviourEditor : UnityEditor.Editor
+#endif
     {
         private bool _logError;
     
+#if ODIN_INSPECTOR_3
+        protected override void OnEnable()
+#else
         private void OnEnable()
+#endif
         {
             EditorApplication.update += Update;
             DragAndDrop.AddDropHandler(InspectorDropHandler);
@@ -51,7 +62,11 @@ namespace CGame.Editor
             }
         }
     
+#if ODIN_INSPECTOR_3
+        protected override void OnDisable()
+#else
         private void OnDisable()
+#endif
         {
             EditorApplication.update -= Update;
             DragAndDrop.RemoveDropHandler(InspectorDropHandler);

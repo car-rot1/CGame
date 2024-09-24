@@ -1,4 +1,7 @@
-public class UserLoginWindowTwo : WindowBase
+namespace CGame
 {
-    public override string Key => nameof(UserLoginWindowTwo);
+    public class UserLoginWindowTwo : WindowBase
+    {
+        public override string Key => nameof(UserLoginWindowTwo);
+    }
 }

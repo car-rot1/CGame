@@ -38,7 +38,7 @@ namespace CGame.Localization
         [MenuItem("Localization/Create Config")]
         private static void CreateConfig()
         {
-            Selection.activeObject = GetConfig();
+            GetConfig();
         }
 
         private static LocalizationConfig GetConfig()

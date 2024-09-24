@@ -8,7 +8,8 @@
         "GUID:75469ad4d38634e559750d17036d5f7c",
         "GUID:6055be8ebefd69e48b49212b09b47b2f",
         "GUID:6546d7765b4165b40850b3667f981c26",
-        "GUID:e34a5702dd353724aa315fb8011f08c3"
+        "GUID:e34a5702dd353724aa315fb8011f08c3",
+        "GUID:2c573e6b271651846a79655161004c5b"
     ],
     "includePlatforms": [
         "Editor"
@@ -29,6 +30,11 @@
             "name": "com.tuyoogame.yooasset",
             "expression": "1.0.0",
             "define": "UNITY_YOOASSET"
+        },
+        {
+            "name": "com.unity.2d.sprite",
+            "expression": "1.0.0",
+            "define": "UNITY_2DSPRITE"
         }
     ],
     "noEngineReferences": false

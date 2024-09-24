@@ -1,4 +1,7 @@
-public class DefaultWindow : WindowBase
+namespace CGame
 {
-    public override string Key => nameof(DefaultWindow);
+    public class DefaultWindow : WindowBase
+    {
+        public override string Key => nameof(DefaultWindow);
+    }
 }
