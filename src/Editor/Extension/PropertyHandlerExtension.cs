@@ -23,7 +23,7 @@ namespace CGame.Editor
             get
             {
                 if (_propertyDrawerPropertyInfo == null)
-                    _propertyDrawerPropertyInfo = _propertyHandleType.GetProperty("decoratorDrawers", BindingFlags.Instance | BindingFlags.NonPublic);
+                    _propertyDrawerPropertyInfo = _propertyHandleType.GetProperty("propertyDrawer", BindingFlags.Instance | BindingFlags.NonPublic);
                 return (PropertyDrawer)_propertyDrawerPropertyInfo!.GetValue(_propertyHandle);
             }
         }
@@ -39,12 +39,12 @@ namespace CGame.Editor
             }
         }
 
-        private MethodInfo _GetHeightMethodInfo;
+        private MethodInfo _getHeightMethodInfo;
         public float GetHeight(SerializedProperty property, GUIContent label, bool includeChildren)
         {
-            if (_GetHeightMethodInfo == null)
-                _GetHeightMethodInfo = _propertyHandleType.GetMethod("GetHeight");
-            return (float)_GetHeightMethodInfo!.Invoke(_propertyHandle, new object[] { property, label, includeChildren });
+            if (_getHeightMethodInfo == null)
+                _getHeightMethodInfo = _propertyHandleType.GetMethod("GetHeight");
+            return (float)_getHeightMethodInfo!.Invoke(_propertyHandle, new object[] { property, label, includeChildren });
         }
     }
 }
