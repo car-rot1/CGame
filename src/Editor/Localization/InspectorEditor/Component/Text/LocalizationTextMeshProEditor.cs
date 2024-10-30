@@ -1,4 +1,3 @@
-#if UNITY_TEXTMESHPRO
 using TMPro;
 using TMPro.EditorUtilities;
 using UnityEditor;
@@ -64,4 +63,3 @@ namespace CGame.Localization.Editor
         }
     }
 }
-#endif

@@ -1,3 +1,4 @@
+/*  存在严重bug，会导致Update死循环
 using System;
 using System.Collections;
 using System.Reflection;
@@ -151,3 +152,4 @@ namespace CGame.Editor
         }
     }
 }
+*/

@@ -1,10 +1,6 @@
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using CGame.Editor;
-#if UNITY_TEXTMESHPRO
 using TMPro;
-#endif
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.SceneManagement;
@@ -51,7 +47,6 @@ namespace CGame.Localization.Editor
             ComponentUtility.ReplaceComponent<Text, LocalizationText>((Text)command.context);
         }
         
-#if UNITY_TEXTMESHPRO
         [MenuItem("CONTEXT/TextMeshPro/Replace LocalizationTextMeshPro")]
         public static void ReplaceLocalizationTextMeshPro(MenuCommand command)
         {
@@ -65,7 +60,6 @@ namespace CGame.Localization.Editor
             ComponentUtility.ReplaceComponent<TextMeshProUGUI, LocalizationTextMeshProUGUI>((TextMeshProUGUI)command.context);
             Debug.Log("替换成功，运行游戏后生效");
         }
-#endif
 
         [MenuItem("GameObject/UI/Legacy/Localization Text", false, 2065)]
         public static void CreateLocalizationText(MenuCommand command)
@@ -102,7 +96,6 @@ namespace CGame.Localization.Editor
             }
         }
         
-#if UNITY_TEXTMESHPRO
         [MenuItem("GameObject/3D Object/Localization TextMeshPro", false, 29)]
         public static void CreateLocalizationTextMeshPro(MenuCommand command)
         {
@@ -164,7 +157,6 @@ namespace CGame.Localization.Editor
                 localText.text = "New Text";
             }
         }
-#endif
 
         private static Canvas GetCanvas()
         {

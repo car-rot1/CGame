@@ -54,9 +54,8 @@ namespace CGame.Localization.Editor
                     textInfo.id = textInfo.value = text switch
                     {
                         Text _text => _text.text,
-#if UNITY_TEXTMESHPRO
-                        TextMeshProUGUI _textMeshPro => _textMeshPro.text,
-#endif
+                        TextMeshPro _textMeshPro => _textMeshPro.text,
+                        TextMeshProUGUI _textMeshProUGUI => _textMeshProUGUI.text,
                         _ => textInfo.value
                     };
                     if (string.IsNullOrWhiteSpace(textInfo.id))

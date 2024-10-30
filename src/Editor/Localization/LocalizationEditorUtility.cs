@@ -36,10 +36,8 @@ namespace CGame.Localization.Editor
         {
             var result = new List<MonoBehaviour>();
             result.AddRange(StageUtility.GetCurrentStageHandle().FindComponentsOfType<Text>());
-#if UNITY_TEXTMESHPRO
             result.AddRange(StageUtility.GetCurrentStageHandle().FindComponentsOfType<TextMeshPro>());
             result.AddRange(StageUtility.GetCurrentStageHandle().FindComponentsOfType<TextMeshProUGUI>());
-#endif
             return result;
         }
         

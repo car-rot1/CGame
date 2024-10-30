@@ -13,11 +13,7 @@ namespace CGame
         [field: SerializeField] public RectTransform SelfTransform { get; private set; }
         
         public Image spriteImage;
-#if UNITY_TEXTMESHPRO
         public TextMeshProUGUI numText;
-#else
-        public Text numText;
-#endif
 
         private Sprite _sprite;
         public Sprite Sprite

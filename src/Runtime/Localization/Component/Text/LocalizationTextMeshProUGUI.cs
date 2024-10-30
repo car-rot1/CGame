@@ -1,4 +1,3 @@
-#if UNITY_TEXTMESHPRO
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -177,4 +176,3 @@ namespace CGame.Localization
         }
     }
 }
-#endif

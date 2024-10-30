@@ -22,11 +22,6 @@
     "defineConstraints": [],
     "versionDefines": [
         {
-            "name": "com.unity.textmeshpro",
-            "expression": "1.0.0",
-            "define": "UNITY_TEXTMESHPRO"
-        },
-        {
             "name": "com.tuyoogame.yooasset",
             "expression": "1.0.0",
             "define": "UNITY_YOOASSET"

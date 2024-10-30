@@ -15,17 +15,9 @@ namespace CGame
         public InputActionReference inputActionReference;
         public int index;
 
-#if UNITY_TEXTMESHPRO
         private LocalizationTextMeshProUGUI _keyNameText;
-#else
-        private LocalizationText _keyNameText;
-#endif
         private Button _rebindKeyButton;
-#if UNITY_TEXTMESHPRO
         private TextMeshProUGUI _keyText;
-#else
-        private Text _keyText;
-#endif
 
         private InputActionRebindingExtensions.RebindingOperation _rebindingOperation;
 
@@ -37,17 +29,9 @@ namespace CGame
             if (!string.IsNullOrEmpty(overrideJson))
                 inputActionReference.action.LoadBindingOverridesFromJson(overrideJson);
                 
-#if UNITY_TEXTMESHPRO
             _keyNameText = GetComponentInChildren<LocalizationTextMeshProUGUI>();
-#else
-            _keyNameText = GetComponentInChildren<LocalizationText>();
-#endif
             _rebindKeyButton = GetComponentInChildren<Button>();
-#if UNITY_TEXTMESHPRO
             _keyText = _rebindKeyButton.GetComponentInChildren<TextMeshProUGUI>();
-#else
-            _keyText = _rebindKeyButton.GetComponentInChildren<Text>();
-#endif
 
             _keyNameText.Id = string.IsNullOrEmpty(customKeyName) ? inputActionReference.action.name : customKeyName;
             _rebindKeyButton.onClick.AddListener(RebindKey);

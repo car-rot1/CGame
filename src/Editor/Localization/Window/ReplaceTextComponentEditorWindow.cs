@@ -28,13 +28,9 @@ namespace CGame.Localization.Editor
             
             TextInfos.Clear();
             TextHashCodes.Clear();
-#if UNITY_TEXTMESHPRO
             var textList = LocalizationEditorUtility.GetCurrentAllText()
                 .Where(text => text is not LocalizationText && text is not LocalizationTextMeshPro && text is not LocalizationTextMeshProUGUI);
-#else
-            var textList = LocalizationEditorUtility.GetCurrentAllLocalTextInfo()
-                .Where(text => text is not LocalizationText);
-#endif
+
             foreach (var text in textList)
             {
                 var hashCode = text.GetHashCode();
@@ -44,10 +40,8 @@ namespace CGame.Localization.Editor
                 textInfo.value = text switch
                 {
                     Text _text => _text.text,
-#if UNITY_TEXTMESHPRO
                     TextMeshPro _text => _text.text,
                     TextMeshProUGUI _text => _text.text,
-#endif
                     _ => textInfo.value
                 };
                 
@@ -199,14 +193,12 @@ namespace CGame.Localization.Editor
                     case Text text:
                         ComponentUtility.ReplaceComponent<Text, LocalizationText>(text);
                         break;
-#if UNITY_TEXTMESHPRO
                     case TextMeshPro text:
                         ComponentUtility.ReplaceComponent<TextMeshPro, LocalizationTextMeshPro>(text);
                         break;
                     case TextMeshProUGUI text:
                         ComponentUtility.ReplaceComponent<TextMeshProUGUI, LocalizationTextMeshProUGUI>(text);
                         break;
-#endif
                 }
                 if (EditorUtility.DisplayCancelableProgressBar("Replace Text Component", "Replacing...", (i + 1.0f) / texts.Count))
                     break;
