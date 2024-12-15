@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace CGame
@@ -21,36 +19,26 @@ namespace CGame
                 return result;
             }
 
-            if (max - min <= num + num)
+            var length = max - min;
+            if (length < num)
             {
-                var randomValues = new List<int>(max - min);
-                for (var i = min; i < max; i++)
-                    randomValues.Add(i);
-
-                var result = new int[num];
-                for (var i = 0; i < num; i++)
-                {
-                    var index = Random.Range(0, randomValues.Count);
-                    result[i] = randomValues[index];
-                    randomValues.RemoveAt(index);
-                }
-                return result;
+                throw new Exception("提供的min max范围过小，无法满足返回num数量的不重复随机数。");
             }
             
-            var hashSet = new HashSet<int>();
-            var differentNum = Mathf.Min(num, max - min);
-            var length = 0;
-            while (length < differentNum)
+            var randomValues = new int[max - min];
+            var randomEndIndex = 0;
+            for (var i = min; i < max; i++)
+                randomValues[randomEndIndex++] = i;
+            for (var i = 0; i < num; i++)
             {
-                var value = Random.Range(min, max);
-                if (hashSet.Contains(value))
-                    continue;
-                hashSet.Add(value);
-                length++;
+                var index = Random.Range(0, randomEndIndex);
+                (randomValues[index], randomValues[randomEndIndex - 1]) = (randomValues[randomEndIndex - 1], randomValues[index]);
+                randomEndIndex--;
             }
-            return hashSet.ToArray();
+
+            return max - min == num ? randomValues : randomValues[(randomEndIndex - 1)..^1];
         }
 
-        public static T RangeForList<T>(IList<T> list) => list.Count <= 0 ? default : list[Random.Range(0, list.Count)];
+        public static T RangeForList<T>(IList<T> list) => list is not { Count: > 0 } ? default : list[Random.Range(0, list.Count)];
     }
 }
