@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace CGame
 {
@@ -104,5 +105,7 @@ namespace CGame
         }
 
         public int Count => _list.Count;
+        
+        public void Clear() => _list.Clear();
     }
 }
